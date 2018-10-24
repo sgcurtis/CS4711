@@ -12,6 +12,8 @@
 #include <stdlib.h>
 
 int main(void) {
+	//variables for recording user's input on size of field, cell placement, etc.
+	//names should be self explanitonway's Game of Life\n\n");
 	int xSize = 0;
 	int ySize = 0;
 	int numCycles = 1;
@@ -35,33 +37,48 @@ int main(void) {
 	int xList[10000];
 	int yList[10000];
 	FILE* fp;
-	printf("Enter Width: ");
+	char* fieldpref[8];
+	char* wrappref[8];
+	//rules and input section
+	printf("Welcome to Conway's Game of Life\n");
+	printf("Rules:\n");
+	printf("The game is played on a 2D orthogonal grid of square cells.\n");
+	printf("The cells are either alive or dead.\n");
+	printf("Every cell has eight neighbors adjacent horizontally, vertically, and diagonally\n");
+	printf("Every turn allows for the following events:\n");
+	printf("Any live cell with less than 2 live neighbors dies\n");
+	printf("Any live cell with 2 or 3 live neighbors lives\n");
+	printf("Any live cell wih 3 or more live neighbors dies\n");
+	printf("Any dead cell with exactly 3 live neighbors becomes alive\n");
+	printf("The rules are applied each turn until the game ends\n\n");
+	
+	printf("Enter preferred field type: I = infinite, B = bounded\n");
+	scanf("%s", fieldpref);
+	printf("Enter Width: \n");
 	scanf("%s", widthBuff);
 	xSize = atoi(widthBuff);
-	printf("\nEnter Height: ");
+	printf("Enter Height: \n");
 	scanf("%s", heightBuff);
 	ySize = atoi(heightBuff);
-	printf("\nEnter # of Cycles ");
+	printf("Enter preferred field wrap style: T = toroidal, S = standard\n");
+	scanf("%s", wrappref);
+	printf("Enter # of Cycles \n");
 	scanf("%s", cycleBuff);
 	numCycles = atoi(cycleBuff);
-	printf("\nWidth: %d Height: %d # of Cycles: %d", xSize, ySize, numCycles);
-
+	printf("Width: %d Height: %d # of Cycles: %d\n", xSize, ySize, numCycles);
+	
+	//2d array for field use
 	char field[xSize][ySize];
 
-	for(int a = 0; a < ySize; a++)
-	{
-
-	for(int b = 0; b < xSize; b++)
-	{
+	for(int a = 0; a < ySize; a++){
+	for(int b = 0; b < xSize; b++){
 
 	field[a][b] = '-';
 	}
-
 	}
-
-
 	int exit = 0;
 
+	//allows the user to input the coordinates they want cells at
 	while(exit == 0)
 	{
 	printf("Enter Next X Coordinate or type exit to exit: ");
@@ -75,7 +92,7 @@ int main(void) {
 	printf("Enter Next Y Coordinate or type exit to exit: ");
 	scanf("%s",yStartBuff);
 	yStart = atoi(yStartBuff);
-
+	
 	if(strcmp(yStartBuff,"exit") == 0)
 	{
 	exit = 1;
