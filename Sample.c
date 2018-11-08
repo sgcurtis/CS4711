@@ -407,7 +407,78 @@ for(int i = 0; i < numCycles; i++)
 
 
 }
+ 
+       //work for save and load 11/6
+        char* saveStr[100];
+        printf("\n");
+        printf("Would you like to save field? Type yes or no.");
+	printf("\n");
+	scanf("%s", saveStr);
+	if(strcmp(saveStr, "no") == 0)
+	{
+	  printf("Goodbye\n");
+	}
+	if(strcmp(saveStr, "yes") == 0)
+	{
+	  printf("Saved\n");
+	  FILE *f = fopen("sample.data", "wb");
+	  fprintf(f, "%d\n", xSize);
+	  fprintf(f, "%d\n", ySize);
+	  fwrite(field, sizeof(char), sizeof(field), f);
+	  fclose(f);
+	}
+	
+	char* loadStr[100];
+	printf("\n");
+        printf("Would you like to load a field? Type yes or no.");
+	printf("\n");
+	scanf("%s", loadStr);
+	if(strcmp(loadStr, "no") == 0)
+	{
+	  printf("Goodbye\n");
+	}
+	if(strcmp(loadStr, "yes") == 0)
+	{
+	  FILE *file;
+	  file = fopen("sample.data", "r");
 
+	  if (file == NULL)
+	    {
+	      printf("no such file\n");
+	      return 0;
+	    }
+	  
+	  //read file into array
+	  char* xSize[100];
+	  char* ySize[100];
+	  
+	  fscanf(file, "%s", &xSize);
+	  fscanf(file, "%s", &ySize);
+
+	  int x = atoi(xSize);
+	  int y = atoi(ySize);
+	  int size = x*y + 1;
+	  char buf[size];
+
+	  fscanf(file, "%s", &buf);
+
+	  int xDim;
+	  int yDim;
+
+	  int counter = 0;
+	  for (yDim = 0; yDim < y; yDim++)
+	    {
+	      for (xDim = 0; xDim < x; xDim++)
+		{
+		  printf("|");
+		  printf("%c", buf[counter]);
+		  printf("|");
+		  counter++;
+		}
+	      putchar('\n');
+	    }
+
+	}
 
 
 
