@@ -44,7 +44,7 @@ int infinite = 0;
 int wrap = 0;
 int liveNeigh = 0;
 //2d array for field use, starts at size of 2x2, changed later
-char field[2][2];
+//char field[2][2];
 
 
 struct Node  {
@@ -152,10 +152,10 @@ void ReversePrint() {
 	int defSize = 40;
 	int infinite = 0;
 	int wrap = 0;*/
-void initField(int x, int y){
-field[x][y];
+//void initField(int x, int y){
+//field[x][y];
 
-}
+//}
 void getInput(){
 	//rules and input section
 	printf("Welcome to Conway's Game of Life\n");
