@@ -43,8 +43,9 @@ int defSize = 40;
 int infinite = 0;
 int wrap = 0;
 int liveNeigh = 0;
-char* field[100][100];
 //2d array for field use, starts at size of 2x2, changed later
+char field[2][2];
+
 
 struct Node  {
 	int xCoord;
@@ -152,7 +153,7 @@ void ReversePrint() {
 	int infinite = 0;
 	int wrap = 0;*/
 void initField(){
-field[ySize][xSize];
+field[xSize][ySize];
 
 }
 void getInput(){
@@ -215,7 +216,7 @@ void getInput(){
 	//2d array for field use
 	//char field[xSize][ySize];
 
-	//initField();
+	initField();
 
 	for(int a = 0; a < ySize; a++){
 		for(int b = 0; b < xSize; b++){
@@ -245,10 +246,8 @@ void getInput(){
 			exit = 1;
 			break;
 		}
-		if(exit == 0)
-		{
+
 		InsertAtHead(xStart,yStart);
-		}
 		//field[yStart][xStart] = '+';
 	}
 	struct Node* temp = head;
@@ -267,28 +266,8 @@ void getInput(){
 }
 
 void cycleWork(){
-	int loop = 0;
-	char* cycleBuffer2[8];
-	
-	
 	for(int i = 0; i < numCycles; i++)
 	{
-		loop = 0;
-		printf("Please enter n to proceed to the next cycle: ");
-		scanf("%s",cycleBuffer2);
-	
-		while(loop = 0)
-		{
-
-		if(cycleBuffer2[0] == 'N' || cycleBuffer2[0] == 'n')
-		{
-
-		loop = 1;
-		
-		}
-	
-		}
-		
 
 		//print cycles
 		printf("\nCycle %d\n", i);
