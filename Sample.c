@@ -175,9 +175,20 @@ int main(void) {
 	break;
 	}
 
-	
-	field[yStart][xStart] = '+';
+	InsertAtHead(xStart,yStart);
+	//field[yStart][xStart] = '+';
 	}
+struct Node* temp = head;
+
+while(temp != NULL)
+{
+//insert into array version
+field[((temp->yCoord)%ySize)][((temp->xCoord)%xSize)] = '+';
+//printf("\ngoing\n");
+temp = temp->next;
+
+}	
+
 
 
 
@@ -310,11 +321,10 @@ for(int i = 0; i < numCycles; i++)
 	}
 
 	}
-
-	}
 	}
 	
-
+	}
+	
 
 
 	//print cycles
@@ -326,10 +336,16 @@ for(int i = 0; i < numCycles; i++)
 	{
 	printf("|%c|",field[a][b]);
 	}
+
 	printf("\n");
 	}
-	printf("\nxStart:%d yStart:%d \n",xStart,yStart);
+	//printf("\nxStart:%d yStart:%d \n",xStart,yStart);
+	printf("\n\n");
 }
+
+
+
+
 	return EXIT_SUCCESS;
 }
 
