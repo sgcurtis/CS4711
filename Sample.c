@@ -8,8 +8,84 @@
  ============================================================================
  */
 
+
 #include <stdio.h>
 #include <stdlib.h>
+
+
+struct Node  {
+	int xCoord;
+	int yCoord;
+	struct Node* next;
+	struct Node* prev;
+};
+
+struct Node* head; // global variable - pointer to head node.
+
+struct Node* GetNewNode(int x, int y) {
+	struct Node* newNode
+		= (struct Node*)malloc(sizeof(struct Node));
+	newNode->xCoord = x;
+	newNode->yCoord = y;
+	newNode->prev = NULL;
+	newNode->next = NULL;
+	return newNode;
+}
+
+//Inserts a Node at head of doubly linked list
+void InsertAtHead(int x, int y) {
+	struct Node* newNode = GetNewNode(x,y);
+	if(head == NULL) {
+		head = newNode;
+		return;
+	}
+
+	head->prev = newNode;
+	newNode->next = head; 
+	head = newNode;
+}
+
+//Inserts a Node at tail of Doubly linked list
+void InsertAtTail(int x, int y) {
+	struct Node* temp = head;
+	struct Node* newNode = GetNewNode(x,y);
+	if(head == NULL) {
+		head = newNode;
+		return;
+	}
+	while(temp->next != NULL) temp = temp->next; // Go To last Node
+	temp->next = newNode;
+	newNode->prev = temp;
+}
+
+//Prints all the elements in linked list in forward traversal order
+void Print() {
+	struct Node* temp = head;
+	printf("Forward: ");
+	while(temp != NULL) {
+		printf("(%d,%d) ",temp->xCoord,temp->yCoord);
+		temp = temp->next;
+	}
+	printf("\n");
+}
+
+void ReversePrint() {
+	struct Node* temp = head;
+	if(temp == NULL) return; // empty list, exit
+	// Going to last Node
+	while(temp->next != NULL) {
+		temp = temp->next;
+	}
+	// Traversing backward using prev pointer
+	printf("Reverse: ");
+	while(temp != NULL) {
+		printf("(%d,&d) ",temp->xCoord,temp->yCoord);
+		temp = temp->prev;
+	}
+	printf("\n");
+}
+
+
 
 int main(void) {
 	//variables for recording user's input on size of field, cell placement, etc.
@@ -159,9 +235,9 @@ for(int i = 0; i < numCycles; i++)
 	liveNeigh = liveNeigh + 1;
 	}
 
-	if(!(liveNeigh == 2 || liveNeigh == 3))
+	if(liveNeigh > 3)
 	{
-	field[a][b] == '-';
+	field[a][b] == 'm';
 	}
 
 
@@ -213,13 +289,33 @@ for(int i = 0; i < numCycles; i++)
 
 	if(liveNeigh == 3)
 	{
-	field[a][b] = '+';
+	//did this for important reasons
+	field[a][b] = 'p';
 	}
 	}
 	
 	}
+	for(int x = 0; x < ySize; x++)
+	{
+	for(int y = 0; y < xSize; y++)
+	{
+	if(field[x][y] == 'p')
+	{
+	field[x][y] = '+';
+	}
+	
+	if(field[x][y] == 'm')
+	{
+	field[x][y] = '-';
+	}
 
 	}
+
+	}
+	}
+	
+
+
 
 	//print cycles
 	printf("\nCycle %d\n", i);
