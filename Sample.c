@@ -1,7 +1,7 @@
 /*
  ============================================================================
  Name        : Conway.c
- Author      : 
+ Author      :WalkersRangers 
  Version     :
  Copyright   : Your copyright notice
  Description : Hello World in C, Ansi-style
@@ -189,11 +189,30 @@ temp = temp->next;
 
 }	
 
-
+int liveNeigh = 0;
 
 
 for(int i = 0; i < numCycles; i++)
 {
+	
+	//print cycles
+	printf("\nCycle %d\n", i);
+	for(int a = 0; a < ySize; a++)
+	{
+
+	for(int b = 0; b < xSize; b++)
+	{
+	printf("|%c|",field[a][b]);
+	}
+
+	printf("\n");
+	}
+	//printf("\nxStart:%d yStart:%d \n",xStart,yStart);
+	printf("\n\n");
+	
+
+
+
 	//do checking of cells in each cycle
 	//currently unimplemented need to get rid of -1 on for loop replace with checks on ifs for exceding boundary
 	for(int a = 0; a < ySize - 1; a++)
@@ -201,46 +220,46 @@ for(int i = 0; i < numCycles; i++)
 
 	for(int b = 0; b < xSize - 1; b++)
 	{
-
+	
 	if(field[a][b] == '+')
 	{
-	int liveNeigh = 0;
-
+	liveNeigh = 0;
+	//check 1
 	if(field[a+1][b] == '+')
 	{
 	liveNeigh = liveNeigh + 1;
 	}
-
+	//check 2
 	if(field[a+1][b+1] == '+')
 	{
 	liveNeigh = liveNeigh + 1;
 	}
-
+	//chck 3
 	if(field[a-1][b-1] == '+')
 	{
 	liveNeigh = liveNeigh + 1;
 	}
-
+	//check 4
 	if(field[a][b+1] == '+')
 	{
 	liveNeigh = liveNeigh + 1;
 	}
-
+	//check 5
 	if(field[a-1][b] == '+')
 	{
 	liveNeigh = liveNeigh + 1;
 	}
-
+	//check 6
 	if(field[a][b-1] == '+')
 	{
 	liveNeigh = liveNeigh + 1;
 	}
-
+	//check 7
 	if(field[a-1][b+1] == '+')
 	{
 	liveNeigh = liveNeigh + 1;
 	}
-
+	//check 8
 	if(field[a+1][b-1] == '+')
 	{
 	liveNeigh = liveNeigh + 1;
@@ -248,7 +267,9 @@ for(int i = 0; i < numCycles; i++)
 
 	if(liveNeigh > 3)
 	{
-	field[a][b] == 'm';
+	field[a][b] = 'm';
+	//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+
 	}
 
 
@@ -256,7 +277,7 @@ for(int i = 0; i < numCycles; i++)
 
 	if(field[a][b] == '-')
 	{
-	int liveNeigh = 0;
+	liveNeigh = 0;
 
 	if(field[a+1][b] == '+')
 	{
@@ -303,6 +324,7 @@ for(int i = 0; i < numCycles; i++)
 	//did this for important reasons
 	field[a][b] = 'p';
 	}
+
 	}
 	
 	}
@@ -322,25 +344,11 @@ for(int i = 0; i < numCycles; i++)
 
 	}
 	}
-	
+
 	}
 	
 
 
-	//print cycles
-	printf("\nCycle %d\n", i);
-	for(int a = 0; a < ySize; a++)
-	{
-
-	for(int b = 0; b < xSize; b++)
-	{
-	printf("|%c|",field[a][b]);
-	}
-
-	printf("\n");
-	}
-	//printf("\nxStart:%d yStart:%d \n",xStart,yStart);
-	printf("\n\n");
 }
 
 
