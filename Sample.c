@@ -150,16 +150,16 @@ int main(void) {
 	scanf("%s", heightBuff);
 	ySize = atoi(heightBuff);
 	}
-
+	
+	
 	//if we have an infinite field do this
 	if(infinite == 1)
 	{
 	//set grid dimensions to some that are very big but fit on screen
 	xSize = defSize;
 	ySize = defSize;
-
 	}
-
+	
 	
 	printf("Enter preferred field wrap style: T = toroidal, S = standard\n");
 	scanf("%s", wrappref);
@@ -221,11 +221,25 @@ temp = temp->next;
 }	
 
 int liveNeigh = 0;
-
-
+int loop = 0;
+char* cycleBuff2[8];
+int atXLimit = 0;
+int atYLimit = 0;
 for(int i = 0; i < numCycles; i++)
 {
-	
+	printf("Type n for Next Cycle: ");
+	scanf("%s",cycleBuff2);
+	loop = 0;
+	while(loop = 0)
+	{
+
+	if(cycleBuff2[0] == 'n' || cycleBuff2[0] == 'N')
+	{
+	loop = 1;
+	}
+
+	}
+		
 	//print cycles
 	printf("\nCycle %d\n", i);
 	for(int a = 0; a < ySize; a++)
@@ -251,6 +265,18 @@ for(int i = 0; i < numCycles; i++)
 
 	for(int b = 0; b < xSize - 1; b++)
 	{
+
+	if(a + 1 >= ySize || a - ySize < 0)
+	{
+	//printf("current position is at Y limit");
+	atYLimit = 1;
+	}
+
+	if(b+1 >= xSize || b - xSize < 0)
+	{
+	//printf("current position is at Y limit");
+	atXLimit = 1;
+	}
 	
 	if(field[a][b] == '+')
 	{
