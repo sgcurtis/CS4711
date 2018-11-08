@@ -115,6 +115,9 @@ int main(void) {
 	FILE* fp;
 	char* fieldpref[8];
 	char* wrappref[8];
+	int defSize = 40;
+	int infinite = 0;
+	int wrap = 0;
 	//rules and input section
 	printf("Welcome to Conway's Game of Life\n");
 	printf("Rules:\n");
@@ -130,14 +133,42 @@ int main(void) {
 	
 	printf("Enter preferred field type: I = infinite, B = bounded\n");
 	scanf("%s", fieldpref);
+
+	//if they go for infinite field set it to true
+	if(fieldpref[0] == 'I' || fieldpref[0] == 'i')
+	{
+	infinite = 1;
+	}
+	
+	//if we dont use infinite field do this	
+	if(infinite == 0)
+	{
 	printf("Enter Width: \n");
 	scanf("%s", widthBuff);
 	xSize = atoi(widthBuff);
 	printf("Enter Height: \n");
 	scanf("%s", heightBuff);
 	ySize = atoi(heightBuff);
+	}
+
+	//if we have an infinite field do this
+	if(infinite == 1)
+	{
+	//set grid dimensions to some that are very big but fit on screen
+	xSize = defSize;
+	ySize = defSize;
+
+	}
+
+	
 	printf("Enter preferred field wrap style: T = toroidal, S = standard\n");
 	scanf("%s", wrappref);
+
+	if(wrappref[0] == 'T' || wrappref[0] == 't')
+	{
+	wrap = 1;
+	}
+
 	printf("Enter # of Cycles \n");
 	scanf("%s", cycleBuff);
 	numCycles = atoi(cycleBuff);
