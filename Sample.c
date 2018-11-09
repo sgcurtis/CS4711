@@ -11,6 +11,8 @@ Description : Hello World in C, Ansi-style
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 //variables for recording user's input on size of field, cell placement, etc.
 //names should be self explanitonway's Game of Life\n\n");
@@ -23,15 +25,15 @@ int xStart2 = 0;
 int yStart2 = 0;
 int xStart3 = 0;
 int yStart3 = 0;
-char* widthBuff[8];
-char* heightBuff[8];
-char* cycleBuff[8];
-char* xStartBuff[8];
-char* yStartBuff[8];
-char* xStartBuff2[8];
-char* yStartBuff2[8];
-char* xStartBuff3[8];
-char* yStartBuff3[8];
+char widthBuff[8];
+char heightBuff[8];
+char cycleBuff[8];
+char xStartBuff[8];
+char yStartBuff[8];
+//char* xStartBuff2[8];
+//char* yStartBuff2[8];
+//char* xStartBuff3[8];
+//char* yStartBuff3[8];
 char* path[10000];
 char coordList[1000];
 int xList[10000];
@@ -43,6 +45,9 @@ int defSize = 40;
 int infinite = 0;
 int wrap = 0;
 int liveNeigh = 0;
+char sleepBuf[8];
+int sleepTime = 0;
+
 //2d array for field use, starts at size of 2x2, changed later
 //char field[2][2];
 
@@ -174,7 +179,7 @@ void getInput(){
 	scanf("%s", fieldpref);
 
 	//if they go for infinite field set it to true
-	if(fieldpref[0] == 'I' || fieldpref[0] == 'i')
+	if(fieldpref[0] == "I" || fieldpref[0] == "i")
 	{
 		infinite = 1;
 	}
@@ -203,7 +208,7 @@ void getInput(){
 	printf("Enter preferred field wrap style: T = toroidal, S = standard\n");
 	scanf("%s", wrappref);
 
-	if(wrappref[0] == 'T' || wrappref[0] == 't')
+	if(wrappref[0] == "T" || wrappref[0] == "t")
 	{
 		wrap = 1;
 	}
@@ -213,11 +218,21 @@ void getInput(){
 	numCycles = atoi(cycleBuff);
 	printf("Width: %d Height: %d # of Cycles: %d\n", xSize, ySize, numCycles);
 
+	//Get cycle delay
+	printf("Enter cycle delay (in seconds): ");
+	scanf("%s", sleepBuf);
+	sleepTime = atoi(sleepBuf);
+  
 	}
+
+
+
+
+
 	void cycleWork(){
 	//2d array for field use
 	char field[xSize][ySize];
-
+	
 	//initField(xSize, ySize);
 
 	for(int a = 0; a < ySize; a++){
@@ -283,9 +298,11 @@ void getInput(){
 		}
 		//printf("\nxStart:%d yStart:%d \n",xStart,yStart);
 		printf("\n\n");
-
-
-
+	
+		// amount of delay between cycles (in seconds)
+		if(sleepTime != 0) {
+			sleep(sleepTime);
+		}
 
 		//do checking of cells in each cycle
 		//currently unimplemented need to get rid of -1 on for loop replace with checks on ifs for exceding boundary
@@ -428,7 +445,7 @@ void getInput(){
 
 
 
-	return EXIT_SUCCESS;
+	return;
 }
 int main(void){
 
