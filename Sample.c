@@ -39,7 +39,6 @@ char coordList[1000];
 int xList[10000];
 int yList[10000];
 FILE* fp;
-char* fieldpref[8];
 char* wrappref[8];
 int defSize = 40;
 int infinite = 0;
@@ -47,7 +46,12 @@ int wrap = 0;
 int liveNeigh = 0;
 char sleepBuf[8];
 int sleepTime = 0;
-
+char* fieldpref[8];
+int time = 0;
+int step = 0;
+char* stepbuff[8];
+char* stepper[8];
+int stepping = 0;
 //2d array for field use, starts at size of 2x2, changed later
 //char field[2][2];
 
@@ -108,6 +112,7 @@ void Print() {
 	printf("\n");
 }
 
+//Prints all the elements in linked list in backward traversal order
 void ReversePrint() {
 	struct Node* temp = head;
 	if(temp == NULL) return; // empty list, exit
@@ -177,11 +182,12 @@ void getInput(){
 
 	printf("Enter preferred field type: I = infinite, B = bounded\n");
 	scanf("%s", fieldpref);
-
+	
 	//if they go for infinite field set it to true
-	if(fieldpref[0] == "I" || fieldpref[0] == "i")
+	if(fieldpref[0] == 'I' || fieldpref[0] == 'i')
 	{
-		infinite = 1;
+	infinite = 1;
+
 	}
 
 	//if we dont use infinite field do this	
@@ -217,12 +223,34 @@ void getInput(){
 	scanf("%s", cycleBuff);
 	numCycles = atoi(cycleBuff);
 	printf("Width: %d Height: %d # of Cycles: %d\n", xSize, ySize, numCycles);
+	
+	printf("Cycle by step or by time? (s for step t for time): \n");
+	scanf("%s", stepbuff);
+	
 
+	if(stepbuff[0] == 's' || stepbuff[0] == 'S')
+	{
+	step = 1;
+	}
+
+	if(stepbuff[0] == 't' || stepbuff[0] == 'T')
+	{
+	time = 1;
+	}
+	
+	if(time == 1)
+	{
 	//Get cycle delay
 	printf("Enter cycle delay (in seconds): ");
 	scanf("%s", sleepBuf);
 	sleepTime = atoi(sleepBuf);
-  
+  	}
+
+	if(step == 1)
+	{
+	sleepTime = 0;
+	}
+
 	}
 
 
@@ -280,6 +308,7 @@ void getInput(){
 
 	//int liveNeigh = 0;
 	//end of first section
+	
 
 	for(int i = 0; i < numCycles; i++)
 	{
@@ -303,6 +332,27 @@ void getInput(){
 		if(sleepTime != 0) {
 			sleep(sleepTime);
 		}
+
+
+			//if we are stepping through cycles do this else use timer below
+			if(step == 1)
+			{
+			stepping = 0;
+
+			while(stepping == 0)
+			{
+			printf("\n enter n for next cycle: ");
+			scanf("%s",stepper);
+	
+			if(stepper[0] == 'n' || stepper[0] == 'N')
+			{
+			stepping = 1;
+			}
+
+			}
+
+			}
+
 
 		//do checking of cells in each cycle
 		//currently unimplemented need to get rid of -1 on for loop replace with checks on ifs for exceding boundary
