@@ -11,8 +11,9 @@ Description : Hello World in C, Ansi-style
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+//#include </home/campus24/dfschuen/Desktop/CS4711-master/Unity-master/src/unity.h>
+#include </home/campus24/dfschuen/Desktop/CUnit-2.1-2/CUnit/Headers/CUnit.h> //change this filepath to the filepath on YOUR MACHINE where you store CUnit-2.1-2
+
 
 //variables for recording user's input on size of field, cell placement, etc.
 //names should be self explanitonway's Game of Life\n\n");
@@ -25,33 +26,26 @@ int xStart2 = 0;
 int yStart2 = 0;
 int xStart3 = 0;
 int yStart3 = 0;
-char widthBuff[8];
-char heightBuff[8];
-char cycleBuff[8];
-char xStartBuff[8];
-char yStartBuff[8];
-//char* xStartBuff2[8];
-//char* yStartBuff2[8];
-//char* xStartBuff3[8];
-//char* yStartBuff3[8];
+char* widthBuff[8];
+char* heightBuff[8];
+char* cycleBuff[8];
+char* xStartBuff[8];
+char* yStartBuff[8];
+char* xStartBuff2[8];
+char* yStartBuff2[8];
+char* xStartBuff3[8];
+char* yStartBuff3[8];
 char* path[10000];
 char coordList[1000];
 int xList[10000];
 int yList[10000];
 FILE* fp;
+char* fieldpref[8];
 char* wrappref[8];
-int defSize = 40;
+int defSize = 5;
 int infinite = 0;
 int wrap = 0;
 int liveNeigh = 0;
-char sleepBuf[8];
-int sleepTime = 0;
-char* fieldpref[8];
-int time = 0;
-int step = 0;
-char* stepbuff[8];
-char* stepper[8];
-int stepping = 0;
 //2d array for field use, starts at size of 2x2, changed later
 //char field[2][2];
 
@@ -112,7 +106,6 @@ void Print() {
 	printf("\n");
 }
 
-//Prints all the elements in linked list in backward traversal order
 void ReversePrint() {
 	struct Node* temp = head;
 	if(temp == NULL) return; // empty list, exit
@@ -182,14 +175,13 @@ void getInput(){
 
 	printf("Enter preferred field type: I = infinite, B = bounded\n");
 	scanf("%s", fieldpref);
-	
+
 	//if they go for infinite field set it to true
 	if(fieldpref[0] == 'I' || fieldpref[0] == 'i')
 	{
-	infinite = 1;
-
+		infinite = 1;
 	}
-
+	//TEST_ASSERT_EQUAL(1, infinite);
 	//if we dont use infinite field do this	
 	if(infinite == 0)
 	{
@@ -214,7 +206,7 @@ void getInput(){
 	printf("Enter preferred field wrap style: T = toroidal, S = standard\n");
 	scanf("%s", wrappref);
 
-	if(wrappref[0] == "T" || wrappref[0] == "t")
+	if(wrappref[0] == 'T' || wrappref[0] == 't')
 	{
 		wrap = 1;
 	}
@@ -223,44 +215,26 @@ void getInput(){
 	scanf("%s", cycleBuff);
 	numCycles = atoi(cycleBuff);
 	printf("Width: %d Height: %d # of Cycles: %d\n", xSize, ySize, numCycles);
-	
-	printf("Cycle by step or by time? (s for step t for time): \n");
-	scanf("%s", stepbuff);
-	
-
-	if(stepbuff[0] == 's' || stepbuff[0] == 'S')
-	{
-	step = 1;
-	}
-
-	if(stepbuff[0] == 't' || stepbuff[0] == 'T')
-	{
-	time = 1;
-	}
-	
-	if(time == 1)
-	{
-	//Get cycle delay
-	printf("Enter cycle delay (in seconds): ");
-	scanf("%s", sleepBuf);
-	sleepTime = atoi(sleepBuf);
-  	}
-
-	if(step == 1)
-	{
-	sleepTime = 0;
-	}
 
 	}
 
-
-
-
+	//Testing for user input
+	void test_userInput(){
+		if(fieldpref[0] == 'I' || fieldpref[0] == 'i'){
+			CU_ASSERT_EQUAL(infinte, 1);
+	}
+		CU_ASSERT_EQUAL(widthBuff, xSize);
+		CU_ASSERT_EQUAL(heightBuff, ySize);
+		if(wrappref[0] == 'T'){
+			CU_ASSERT_EQUAL(wrap, 1);
+		}
+		CU_ASSERT_EQUAL(cycleBuff, numCycles);
+	}
 
 	void cycleWork(){
 	//2d array for field use
 	char field[xSize][ySize];
-	
+
 	//initField(xSize, ySize);
 
 	for(int a = 0; a < ySize; a++){
@@ -294,6 +268,7 @@ void getInput(){
 
 		InsertAtHead(xStart,yStart);
 		//field[yStart][xStart] = '+';
+		CU_ASSERT_STRING_EQUAL(field[xStartBuff][yStartBuff], '-');
 	}
 	struct Node* temp = head;
 
@@ -308,7 +283,6 @@ void getInput(){
 
 	//int liveNeigh = 0;
 	//end of first section
-	
 
 	for(int i = 0; i < numCycles; i++)
 	{
@@ -327,31 +301,8 @@ void getInput(){
 		}
 		//printf("\nxStart:%d yStart:%d \n",xStart,yStart);
 		printf("\n\n");
-	
-		// amount of delay between cycles (in seconds)
-		if(sleepTime != 0) {
-			sleep(sleepTime);
-		}
 
 
-			//if we are stepping through cycles do this else use timer below
-			if(step == 1)
-			{
-			stepping = 0;
-
-			while(stepping == 0)
-			{
-			printf("\n enter n for next cycle: ");
-			scanf("%s",stepper);
-	
-			if(stepper[0] == 'n' || stepper[0] == 'N')
-			{
-			stepping = 1;
-			}
-
-			}
-
-			}
 
 
 		//do checking of cells in each cycle
@@ -492,15 +443,15 @@ void getInput(){
 
 	}
 
+void test_cycleWork(){
+	CU_ASSERT_EQUAL(cycleBuff, numCycles);
+}
 
 
-
-	return;
+	return EXIT_SUCCESS;
 }
 int main(void){
-
-
 getInput();
 cycleWork();
-
+test_userInput();
 }
