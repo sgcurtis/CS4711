@@ -52,6 +52,8 @@ int step = 0;
 char* stepbuff[8];
 char* stepper[8];
 int stepping = 0;
+char* playerBuff[20];
+int numPlayers = 1;
 
 //2d array for field use, starts at size of 2x2, changed later
 //char field[2][2];
@@ -167,6 +169,12 @@ void ReversePrint() {
 //field[x][y];
 
 //}
+
+
+
+
+
+
 void getInput(){
 	//rules and input section
 	printf("Welcome to Conway's Game of Life\n");
@@ -226,8 +234,15 @@ void getInput(){
 	printf("Enter # of Cycles / Turns \n");
 	scanf("%s", cycleBuff);
 	numCycles = atoi(cycleBuff);
-	printf("Width: %d Height: %d # of Cycles: %d\n", xSize, ySize, numCycles);
+	printf("Width: %d Height: %d # of Cycles/Turns: %d\n", xSize, ySize, numCycles);
 	
+	printf("Enter # of Players supports 1,2,3: \n");
+	scanf("%s", playerBuff);
+	numPlayers = atoi(playerBuff);
+	
+
+	if(numPlayers == 1)
+	{
 	printf("Cycle by step or by time? (s for step t for time): \n");
 	scanf("%s", stepbuff);
 	
@@ -258,6 +273,7 @@ void getInput(){
 	}
 
 
+}
 
 
 
@@ -563,10 +579,55 @@ void getInput(){
 
 	return;
 }
-int main(void){
 
 
-getInput();
+void twoPlayer()
+{
+printf("\nwe have 2 players\n");
+}
+
+
+
+void threePlayer()
+{
+printf("\nwe have 3 players\n");
+}
+
+
+
+
+void performCycle(int players)
+{
+
+if(players == 1)
+{
 cycleWork();
+}
+
+if(players == 2)
+{
+
+twoPlayer();
+
+}
+
+if(players == 3)
+{
+threePlayer();
+}
+
+}
+
+
+
+
+
+
+int main(void){
+getInput();
+
+performCycle(numPlayers);
+
+//cycleWork();
 
 }
