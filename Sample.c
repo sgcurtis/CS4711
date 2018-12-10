@@ -54,6 +54,7 @@ char* stepper[8];
 int stepping = 0;
 char* playerBuff[20];
 int numPlayers = 1;
+char field[100][100];
 
 //2d array for field use, starts at size of 2x2, changed later
 //char field[2][2];
@@ -284,7 +285,7 @@ void getInput(){
 	//start of cut chunk
 
 	//2d array for field use
-	char field[xSize][ySize];
+	//char field[xSize][ySize];
 	
 	//initField(xSize, ySize);
 
@@ -617,7 +618,7 @@ int yco = 0;
 
 
 	//2d array for field use
-	char field[xSize][ySize];
+	//char field[xSize][ySize];
 	
 	//initField(xSize, ySize);
 
@@ -977,7 +978,7 @@ int xco = 0;
 int yco = 0;
 
 	//2d array for field use
-	char field[xSize][ySize];
+	//char field[xSize][ySize];
 	
 	//initField(xSize, ySize);
 
@@ -1503,7 +1504,7 @@ int xco = 0;
 int yco = 0;
 
 	//2d array for field use
-	char field[xSize][ySize];
+	//char field[xSize][ySize];
 	
 	//initField(xSize, ySize);
 
@@ -2143,6 +2144,129 @@ fourPlayer();
 }
 
 
+void save(){ 
+       //work for save and load 11/6
+        char* saveStr[100];
+        printf("\n");
+        printf("Would you like to save field? Type yes or no.");
+	printf("\n");
+	scanf("%s", saveStr);
+	if(strcmp(saveStr, "no") == 0)
+	{
+	  printf("Goodbye\n");
+	}
+	if(strcmp(saveStr, "yes") == 0)
+	{
+	  printf("Saved\n");
+	  FILE *f = fopen("sample.data", "wb");
+	  fprintf(f, "%d\n", xSize);
+	  fprintf(f, "%d\n", ySize);
+	  fwrite(field, sizeof(char), sizeof(field), f);
+	  fclose(f);
+	}
+}
+
+void load(){
+	char* loadStr[100];
+	printf("\n");
+        printf("Would you like to load a field? Type yes or no.");
+	printf("\n");
+	scanf("%s", loadStr);
+	if(strcmp(loadStr, "no") == 0)
+	{
+	  printf("Goodbye\n");
+	}
+	if(strcmp(loadStr, "yes") == 0)
+	{
+	  FILE *file;
+	  file = fopen("sample.data", "r");
+
+	  if (file == NULL)
+	    {
+	      printf("no such file\n");
+	      return 0;
+	    }
+	  
+	  //read file into array
+	  char* xSize[100];
+	  char* ySize[100];
+	  
+	  fscanf(file, "%s", &xSize);
+	  fscanf(file, "%s", &ySize);
+
+	  int x = atoi(xSize);
+	  int y = atoi(ySize);
+	  int size = x*y + 1;
+	  //char buf[size];
+	  char buf[10000];
+
+	  fscanf(file, "%s", &buf);
+
+	  int xDim;
+	  int yDim;
+
+	  int counter = 0;
+	  int rowCounter = 0;
+	  for (yDim = 0; yDim < 100; yDim++)
+	    {
+	      for (xDim = 0; xDim < 100; xDim++)
+		{
+		  if ((buf[counter] == '+') || (buf[counter] == '-'))
+		    {
+		      //rowCounter++;
+		      if (rowCounter == x)
+			{
+			putchar('\n');
+			rowCounter = 0;
+			}
+		      printf("|");
+		      printf("%c", buf[counter]);
+		      printf("|");
+		      rowCounter++;
+		      counter++;
+		    }
+		  else if (buf[counter] == 'm')
+		    {
+		      if (rowCounter == x)
+			{
+			putchar('\n');
+			rowCounter = 0;
+			}
+		      printf("|");
+		      printf("+");
+		      printf("|");
+		      rowCounter++;
+		      counter++;
+		    }
+		  else if (buf[counter] == 'p')
+		    {
+		      if (rowCounter == x)
+			{
+			putchar('\n');
+			rowCounter = 0;
+			}
+		      printf("|");
+		      printf("-");
+		      printf("|");
+		      rowCounter++;
+		      counter++;
+		    }
+		  else 
+		    {
+		      //printf("|");
+		      //printf("%c", buf[counter]);
+		      // printf("|");
+		      counter++;
+		    }
+		}
+	      //putchar('\n');
+	    }
+	  putchar('\n');
+
+
+	}
+
+}
 
 
 
@@ -2151,6 +2275,8 @@ getInput();
 
 performCycle(numPlayers);
 
+ save();
+ load();
 //cycleWork();
 
 }
