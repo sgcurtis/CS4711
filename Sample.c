@@ -2103,7 +2103,7 @@ printf("\nGame Over Player 3 Wins\n");
 
 if(p4c >= p1c && p4c >= p2c && p4c >= p3c)
 {
-printf("\nGame Over Player 3 Wins\n");
+printf("\nGame Over Player 4 Wins\n");
 }
 
 
