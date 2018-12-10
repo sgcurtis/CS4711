@@ -599,8 +599,13 @@ printf("\nthe last player standing or the one with the most cells at the end of 
 printf("\nNote: All other standard rules apply\n");
 printf("\nGood Luck\n");
 
+//start 2p
 int p1Turn = 0;
 int p2Turn = 0;
+int p1 = 1;
+int p2 = 1;
+int p1c = 0;
+int p2c = 0;
 char* choice[20];
 char pChoice = 'v';
 char xcoBuff[20];
@@ -609,6 +614,7 @@ char xcoc;
 char ycoc;
 int xco = 0;
 int yco = 0;
+
 
 	//2d array for field use
 	char field[xSize][ySize];
@@ -625,11 +631,30 @@ int yco = 0;
 
 while(numCycles > 0)
 {
+
 //start of turn
 numCycles = numCycles - 1;
 
 p1Turn = 3;
 p2Turn = 3;
+
+if(p1 == 0)
+{
+printf("\nPlayer 1 is dead\n");
+printf("\nPlayer 2 wins\n");
+p1Turn = 0;
+break;
+}
+
+
+if(p2 == 0)
+{
+printf("\nPlayer 2 is dead\n");
+p2Turn = 0;
+printf("\nPlayer 1 Wins\n");
+break;
+}
+
 
 while(p1Turn != 0)
 {
@@ -678,10 +703,9 @@ scanf("%s",ycoBuff);
 
 if((char)ycoBuff[0] != 'b')
 {
-
-if(field[yco][xco] != '2')
-{
 yco = atoi(ycoBuff);
+if((char)field[yco][xco] != '2')
+{
 printf("\nKilling cell at (%d,%d)\n",xco,yco);
 field[yco][xco] = '-';
 p1Turn = p1Turn - 1;
@@ -723,9 +747,21 @@ if((char)ycoBuff[0] != 'b')
 
 
 yco = atoi(ycoBuff);
+
+
+if(field[xco][yco] != '-')
+{
+printf("\nError there is already a live cell there\n");
+}
+
+if(field[yco][xco] == '-')
+{
 printf("\nSpawning cell at (%d,%d)\n",xco,yco);
 field[yco][xco] = '1';
 p1Turn = p1Turn - 1;
+}
+
+
 
 }
 
@@ -784,10 +820,9 @@ scanf("%s",ycoBuff);
 
 if((char)ycoBuff[0] != 'b')
 {
-
+yco = atoi(ycoBuff);
 if(field[yco][xco] != '1')
 {
-yco = atoi(ycoBuff);
 printf("\nKilling cell at (%d,%d)\n",xco,yco);
 field[yco][xco] = '-';
 p2Turn = p2Turn - 1;
@@ -829,9 +864,20 @@ if((char)ycoBuff[0] != 'b')
 
 
 yco = atoi(ycoBuff);
+
+
+if(field[yco][xco] != '-')
+{
+printf("\nError their is already a live cell there\n");
+}
+
+if(field[yco][xco] == '-')
+{
 printf("\nSpawning cell at (%d,%d)\n",xco,yco);
 field[yco][xco] = '2';
 p2Turn = p2Turn - 1;
+}
+
 
 }
 
@@ -844,13 +890,62 @@ p2Turn = p2Turn - 1;
 //p2Turn = p2Turn - 1;
 }
 
+//code to apply rules goes here
+
+//code to check for deaths
+p1c = 0;
+p2c = 0;
+	for(int a = 0; a < ySize; a++){
+		for(int b = 0; b < xSize; b++){
+
+			if(field[a][b] == '1')
+			{
+			p1c = p1c + 1;
+			}
+
+			if(field[a][b] == '2')
+			{
+			p2c = p2c + 1;
+			}
+			
+			
+		
+		}
+	}
+//printf("\np1c: %d\n",p1c);
+//printf("\np2c: %d\n",p2c);
+//check for losers
+if(p1c == 0)
+{
+//printf("\nin p1\n");
+p1 = 0;
+}
+
+if(p2c == 0)
+{
+//printf("\nin p2\n");
+p2 = 0;
+}
 
 }
+//end 2p
+
+if(p1c >= p2c)
+{
+printf("\nGame Over Player 1 Wins\n");
+}
+if(p2c >= p1c)
+{
+printf("\nGame Over Player 2 Wins\n");
+}
+
+
 
 }
 
 void threePlayer()
 {
+//start super cut
 printf("\nwe have 3 players\n");
 printf("\nhere are the rules: \n");
 printf("\nEach Players Live cell is their player number eg. Player1's live cells are marked 1\n");
@@ -862,11 +957,514 @@ printf("\nNote: All other standard rules apply\n");
 
 printf("\nGood Luck\n");
 
+//start 2p
+int p1Turn = 0;
+int p2Turn = 0;
+int p3Turn = 0;
+int p1 = 1;
+int p2 = 1;
+int p3 = 1;
+int p1c = 0;
+int p2c = 0;
+int p3c = 0;
+char* choice[20];
+char pChoice = 'v';
+char xcoBuff[20];
+char ycoBuff[20];
+char xcoc;
+char ycoc;
+int xco = 0;
+int yco = 0;
+
+	//2d array for field use
+	char field[xSize][ySize];
+	
+	//initField(xSize, ySize);
+
+	for(int a = 0; a < ySize; a++){
+		for(int b = 0; b < xSize; b++){
+
+			field[a][b] = '-';
+		}
+	}
+
+
+while(numCycles > 0)
+{
+//start of turn
+numCycles = numCycles - 1;
+
+p1Turn = 3;
+p2Turn = 3;
+p3Turn = 3;
+
+if(p1 == 0)
+{
+printf("\nPlayer 1 is dead\n");
+p1Turn = 0;
+}
+
+if(p2 == 0)
+{
+printf("\nPlayer 2 is dead\n");
+p2Turn = 0;
+}
+
+
+if(p3 == 0)
+{
+printf("\nPlayer 3 is dead\n");
+p3Turn = 0;
+}
+
+
+if(p3 == 0 && p2 == 0)
+{
+printf("\nPlayer 1 Wins\n");
+p3Turn = 0;
+break;
+}
+
+if(p1 == 0 && p3 == 0)
+{
+printf("\nPlayer 2 Wins\n");
+break;
+}
+
+
+if(p1 == 0 && p2 == 0)
+{
+printf("\nPlayer 3 Wins\n");
+break;
+}
+
+
+
+while(p1Turn != 0)
+{
+printf("\nMoves Remaining: %d\n", p1Turn);
 printf("\nPlayer1's Turn:");
+scanf("%s", choice);
+pChoice = choice[0];
+//display grid
+
+//vcut
+if(pChoice == 'v')
+{
+printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+
+for(int a = 0; a < ySize; a++)
+{
+
+for(int b = 0; b < xSize; b++)
+{
+
+printf("|%c|",field[a][b]);
+
+}
+printf("\n");
+}
+
+}
+//end vcut
+
+//start kcut
+//kill one of your cells
+if(pChoice == 'k')
+{
+//start cut
+printf("\nEnter X-coord of cell to kill or b to go back:\n");
+scanf("%s", xcoBuff);
+
+if((char)xcoBuff[0] != 'b')
+{
+xco = atoi(xcoBuff);
+printf("\n%d\n",xco);
+
+printf("\nEnter Y-coord of cell to kill or b to go back:");
+scanf("%s",ycoBuff);
+
+
+if((char)ycoBuff[0] != 'b')
+{
+yco = atoi(ycoBuff);
+if((char)field[yco][xco] != '2' && (char)field[yco][xco] != '3')
+{
+printf("\nKilling cell at (%d,%d)\n",xco,yco);
+field[yco][xco] = '-';
+p1Turn = p1Turn - 1;
+}
+//end cut
+else
+{
+printf("\nError that is not your Cell\n");
+}
+
+}
+
+}
+
+
+
+}
+//end kcut
+
+//start scut
+//spawn cell
+if(pChoice == 's')
+{
+//start cut
+printf("\nEnter X-coord of cell to kill or b to go back:\n");
+scanf("%s", xcoBuff);
+
+if((char)xcoBuff[0] != 'b')
+{
+xco = atoi(xcoBuff);
+printf("\n%d\n",xco);
+
+printf("\nEnter Y-coord of cell to kill or b to go back:");
+scanf("%s",ycoBuff);
+
+
+if((char)ycoBuff[0] != 'b')
+{
+
+
+yco = atoi(ycoBuff);
+
+if(field[yco][xco] != '-')
+{
+printf("\nError there is a live cell there already\n");
+}
+
+
+if(field[yco][xco] == '-')
+{
+printf("\nSpawning cell at (%d,%d)\n",xco,yco);
+field[yco][xco] = '1';
+p1Turn = p1Turn - 1;
+}
+
+
+
+}
+
+}
+
+}
+//end s cut
+}
 
 printf("\nPlayer2's Turn:");
+while(p2Turn != 0)
+{
+printf("\nMoves Remaining: %d\n", p2Turn);
+printf("\nPlayer2's Turn:");
+scanf("%s", choice);
+pChoice = choice[0];
+//display grid
 
+
+//vcut
+if(pChoice == 'v')
+{
+printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+
+for(int a = 0; a < ySize; a++)
+{
+
+for(int b = 0; b < xSize; b++)
+{
+
+printf("|%c|",field[a][b]);
+
+}
+printf("\n");
+}
+
+}
+//end vcut
+
+//start kcut
+//kill one of your cells
+if(pChoice == 'k')
+{
+//start cut
+printf("\nEnter X-coord of cell to kill or b to go back:\n");
+scanf("%s", xcoBuff);
+
+if((char)xcoBuff[0] != 'b')
+{
+xco = atoi(xcoBuff);
+printf("\n%d\n",xco);
+
+printf("\nEnter Y-coord of cell to kill or b to go back:");
+scanf("%s",ycoBuff);
+
+
+if((char)ycoBuff[0] != 'b')
+{
+yco = atoi(ycoBuff);
+if(field[yco][xco] != '1' && field[yco][xco] != '3')
+{
+printf("\nKilling cell at (%d,%d)\n",xco,yco);
+field[yco][xco] = '-';
+p2Turn = p2Turn - 1;
+}
+//end cut
+else
+{
+printf("\nError that is not your Cell\n");
+}
+
+}
+
+}
+
+
+
+}
+//end kcut
+
+//start s cut
+//spawn cell
+if(pChoice == 's')
+{
+//start cut
+printf("\nEnter X-coord of cell to kill or b to go back:\n");
+scanf("%s", xcoBuff);
+
+if((char)xcoBuff[0] != 'b')
+{
+xco = atoi(xcoBuff);
+printf("\n%d\n",xco);
+
+printf("\nEnter Y-coord of cell to kill or b to go back:");
+scanf("%s",ycoBuff);
+
+
+if((char)ycoBuff[0] != 'b')
+{
+
+
+yco = atoi(ycoBuff);
+
+
+
+if(field[yco][xco] != '-')
+{
+printf("\nError there is already a live cell there\n");
+}
+
+
+if(field[yco][xco] == '-')
+{
+printf("\nSpawning cell at (%d,%d)\n",xco,yco);
+field[yco][xco] = '2';
+p2Turn = p2Turn - 1;
+}
+
+
+
+}
+
+}
+
+}
+//end s cut
+
+
+//p2Turn = p2Turn - 1;
+}
+
+while(p3Turn != 0)
+{
+printf("\nMoves Remaining: %d\n", p3Turn);
 printf("\nPlayer3's Turn:");
+scanf("%s", choice);
+pChoice = choice[0];
+
+//display grid
+//vcut
+if(pChoice == 'v')
+{
+printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+
+for(int a = 0; a < ySize; a++)
+{
+
+for(int b = 0; b < xSize; b++)
+{
+
+printf("|%c|",field[a][b]);
+
+}
+printf("\n");
+}
+
+}
+//end vcut
+
+//start kcut
+//kill one of your cells
+if(pChoice == 'k')
+{
+//start cut
+printf("\nEnter X-coord of cell to kill or b to go back:\n");
+scanf("%s", xcoBuff);
+
+if((char)xcoBuff[0] != 'b')
+{
+xco = atoi(xcoBuff);
+printf("\n%d\n",xco);
+
+printf("\nEnter Y-coord of cell to kill or b to go back:");
+scanf("%s",ycoBuff);
+
+
+if((char)ycoBuff[0] != 'b')
+{
+yco = atoi(ycoBuff);
+
+if((char)field[yco][xco] != '1' && (char)field[yco][xco] != '2')
+{
+
+//printf("\n%c\n",field[yco][xco]);
+printf("\nKilling cell at (%d,%d)\n",xco,yco);
+field[yco][xco] = '-';
+p3Turn = p3Turn - 1;
+
+}
+//end cut
+else
+{
+printf("\nError that is not your Cell\n");
+}
+
+}
+
+}
+
+
+
+}
+//end kcut
+
+//start s cut
+//spawn cell
+if(pChoice == 's')
+{
+//start cut
+printf("\nEnter X-coord of cell to kill or b to go back:\n");
+scanf("%s", xcoBuff);
+
+if((char)xcoBuff[0] != 'b')
+{
+xco = atoi(xcoBuff);
+printf("\n%d\n",xco);
+
+printf("\nEnter Y-coord of cell to kill or b to go back:");
+scanf("%s",ycoBuff);
+
+
+if((char)ycoBuff[0] != 'b')
+{
+
+
+yco = atoi(ycoBuff);
+
+if(field[yco][xco] != '-')
+{
+printf("\nError there is already a live cell there\n");
+}
+
+if(field[yco][xco] == '-')
+{
+printf("\nSpawning cell at (%d,%d)\n",xco,yco);
+field[yco][xco] = '3';
+p3Turn = p3Turn - 1;
+}
+
+
+
+}
+
+}
+
+}
+//end s cut
+
+
+}
+
+
+//code to check for deaths
+p1c = 0;
+p2c = 0;
+p3c = 0;
+	for(int a = 0; a < ySize; a++){
+		for(int b = 0; b < xSize; b++){
+
+			if(field[a][b] == '1')
+			{
+			p1c = p1c + 1;
+			}
+
+			if(field[a][b] == '2')
+			{
+			p2c = p2c + 1;
+			}
+
+
+			if(field[a][b] == '3')
+			{
+			p3c = p3c + 1;
+			}
+			
+			
+		
+		}
+	}
+//printf("\np1c: %d\n",p1c);
+//printf("\np2c: %d\n",p2c);
+//check for losers
+if(p1c == 0)
+{
+//printf("\nin p1\n");
+p1 = 0;
+}
+
+if(p2c == 0)
+{
+//printf("\nin p2\n");
+p2 = 0;
+}
+
+
+if(p3c == 0)
+{
+//printf("\nin p2\n");
+p3 = 0;
+}
+
+
+}
+//end 2p
+
+if(p1c >= p2c && p1c >= p3c)
+{
+printf("\nGame Over Player 1 Wins\n");
+}
+
+if(p2c >= p1c && p2c >= p3c)
+{
+printf("\nGame Over Player 2 Wins\n");
+}
+
+if(p3c >= p1c && p3c >= p2c)
+{
+printf("\nGame Over Player 3 Wins\n");
+}
 
 }
 
@@ -882,15 +1480,634 @@ printf("\nYou cannot directly kill an opponents cell\n");
 printf("\nthe last player standing or the one with the most cells at the end of the game is the winner\n");
 printf("\nNote: All other standard rules apply\n");
 
-printf("\nGood Luck\n");
+//start 2p
+int p1Turn = 0;
+int p2Turn = 0;
+int p3Turn = 0;
+int p4Turn = 0;
+int p1 = 1;
+int p2 = 1;
+int p3 = 1;
+int p4 = 1;
+int p1c = 0;
+int p2c = 0;
+int p3c = 0;
+int p4c = 0;
+char* choice[20];
+char pChoice = 'v';
+char xcoBuff[20];
+char ycoBuff[20];
+char xcoc;
+char ycoc;
+int xco = 0;
+int yco = 0;
 
+	//2d array for field use
+	char field[xSize][ySize];
+	
+	//initField(xSize, ySize);
+
+	for(int a = 0; a < ySize; a++){
+		for(int b = 0; b < xSize; b++){
+
+			field[a][b] = '-';
+		}
+	}
+
+
+while(numCycles > 0)
+{
+//start of turn
+numCycles = numCycles - 1;
+
+p1Turn = 3;
+p2Turn = 3;
+p3Turn = 3;
+p4Turn = 3;
+
+
+if(p1 == 0)
+{
+printf("\nPlayer 1 is dead\n");
+p1Turn = 0;
+}
+
+if(p2 == 0)
+{
+printf("\nPlayer 2 is dead\n");
+p2Turn = 0;
+}
+
+
+if(p3 == 0)
+{
+printf("\nPlayer 3 is dead\n");
+p3Turn = 0;
+}
+
+
+if(p4 == 0)
+{
+printf("\nPlayer 4 is dead\n");
+p4Turn = 0;
+}
+
+
+if(p3 == 0 && p2 == 0 && p4 == 0)
+{
+printf("\nPlayer 1 Wins\n");
+p3Turn = 0;
+break;
+}
+
+if(p1 == 0 && p3 == 0 && p4 == 0)
+{
+printf("\nPlayer 2 Wins\n");
+break;
+}
+
+
+if(p1 == 0 && p2 == 0 && p4 == 0)
+{
+printf("\nPlayer 3 Wins\n");
+break;
+}
+
+if(p1 == 0 && p2 == 0 && p3 == 0)
+{
+printf("\nPlayer 4 Wins\n");
+break;
+}
+
+
+while(p1Turn != 0)
+{
+printf("\nMoves Remaining: %d\n", p1Turn);
 printf("\nPlayer1's Turn:");
+scanf("%s", choice);
+pChoice = choice[0];
+//display grid
 
+//vcut
+if(pChoice == 'v')
+{
+printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+
+for(int a = 0; a < ySize; a++)
+{
+
+for(int b = 0; b < xSize; b++)
+{
+
+printf("|%c|",field[a][b]);
+
+}
+printf("\n");
+}
+
+}
+//end vcut
+
+//start kcut
+//kill one of your cells
+if(pChoice == 'k')
+{
+//start cut
+printf("\nEnter X-coord of cell to kill or b to go back:\n");
+scanf("%s", xcoBuff);
+
+if((char)xcoBuff[0] != 'b')
+{
+xco = atoi(xcoBuff);
+printf("\n%d\n",xco);
+
+printf("\nEnter Y-coord of cell to kill or b to go back:");
+scanf("%s",ycoBuff);
+
+
+if((char)ycoBuff[0] != 'b')
+{
+yco = atoi(ycoBuff);
+
+if((char)field[yco][xco] != '2' && (char)field[yco][xco] != '3' && field[yco][xco] != '4')
+{
+printf("\nKilling cell at (%d,%d)\n",xco,yco);
+field[yco][xco] = '-';
+p1Turn = p1Turn - 1;
+}
+//end cut
+else
+{
+printf("\nError that is not your Cell\n");
+}
+
+}
+
+}
+
+
+
+}
+//end kcut
+
+//start scut
+//spawn cell
+if(pChoice == 's')
+{
+//start cut
+printf("\nEnter X-coord of cell to kill or b to go back:\n");
+scanf("%s", xcoBuff);
+
+if((char)xcoBuff[0] != 'b')
+{
+xco = atoi(xcoBuff);
+printf("\n%d\n",xco);
+
+printf("\nEnter Y-coord of cell to kill or b to go back:");
+scanf("%s",ycoBuff);
+
+
+if((char)ycoBuff[0] != 'b')
+{
+yco = atoi(ycoBuff);
+
+
+if(field[yco][xco] != '-')
+{
+printf("Error there is already a live cell there");
+}
+
+
+if(field[yco][xco] == '-')
+{
+printf("\nSpawning cell at (%d,%d)\n",xco,yco);
+field[yco][xco] = '1';
+p1Turn = p1Turn - 1;
+}
+
+
+
+}
+
+}
+
+}
+//end s cut
+}
+
+
+//start p2 turn
 printf("\nPlayer2's Turn:");
+while(p2Turn != 0)
+{
+printf("\nMoves Remaining: %d\n", p2Turn);
+printf("\nPlayer2's Turn:");
+scanf("%s", choice);
+pChoice = choice[0];
+//display grid
 
+
+//vcut
+if(pChoice == 'v')
+{
+printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+
+for(int a = 0; a < ySize; a++)
+{
+
+for(int b = 0; b < xSize; b++)
+{
+
+printf("|%c|",field[a][b]);
+
+}
+printf("\n");
+}
+
+}
+//end vcut
+
+//start kcut
+//kill one of your cells
+if(pChoice == 'k')
+{
+//start cut
+printf("\nEnter X-coord of cell to kill or b to go back:\n");
+scanf("%s", xcoBuff);
+
+if((char)xcoBuff[0] != 'b')
+{
+xco = atoi(xcoBuff);
+printf("\n%d\n",xco);
+
+printf("\nEnter Y-coord of cell to kill or b to go back:");
+scanf("%s",ycoBuff);
+
+
+if((char)ycoBuff[0] != 'b')
+{
+yco = atoi(ycoBuff);
+if(field[yco][xco] != '1' && field[yco][xco] != '3' && field[yco][xco] != '4')
+{
+printf("\nKilling cell at (%d,%d)\n",xco,yco);
+field[yco][xco] = '-';
+p2Turn = p2Turn - 1;
+}
+//end cut
+else
+{
+printf("\nError that is not your Cell\n");
+}
+
+}
+
+}
+
+
+
+}
+//end kcut
+
+//start s cut
+//spawn cell
+if(pChoice == 's')
+{
+//start cut
+printf("\nEnter X-coord of cell to kill or b to go back:\n");
+scanf("%s", xcoBuff);
+
+if((char)xcoBuff[0] != 'b')
+{
+xco = atoi(xcoBuff);
+printf("\n%d\n",xco);
+
+printf("\nEnter Y-coord of cell to kill or b to go back:");
+scanf("%s",ycoBuff);
+
+
+if((char)ycoBuff[0] != 'b')
+{
+
+
+yco = atoi(ycoBuff);
+
+
+
+if(field[yco][xco] != '-')
+{
+printf("\nErrorr there is already a live cell there\n");
+}
+
+if(field[yco][xco] == '-')
+{
+printf("\nSpawning cell at (%d,%d)\n",xco,yco);
+field[yco][xco] = '2';
+p2Turn = p2Turn - 1;
+}
+
+
+
+}
+
+}
+
+}
+//end s cut
+
+
+//p2Turn = p2Turn - 1;
+}
+//end p2
+
+
+while(p3Turn != 0)
+{
+printf("\nMoves Remaining: %d\n", p3Turn);
 printf("\nPlayer3's Turn:");
+scanf("%s", choice);
+pChoice = choice[0];
 
+//display grid
+//vcut
+if(pChoice == 'v')
+{
+printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+
+for(int a = 0; a < ySize; a++)
+{
+
+for(int b = 0; b < xSize; b++)
+{
+
+printf("|%c|",field[a][b]);
+
+}
+printf("\n");
+}
+
+}
+//end vcut
+
+//start kcut
+//kill one of your cells
+if(pChoice == 'k')
+{
+//start cut
+printf("\nEnter X-coord of cell to kill or b to go back:\n");
+scanf("%s", xcoBuff);
+
+if((char)xcoBuff[0] != 'b')
+{
+xco = atoi(xcoBuff);
+printf("\n%d\n",xco);
+
+printf("\nEnter Y-coord of cell to kill or b to go back:");
+scanf("%s",ycoBuff);
+
+
+if((char)ycoBuff[0] != 'b')
+{
+yco = atoi(ycoBuff);
+
+if((char)field[yco][xco] != '1' && (char)field[yco][xco] != '2' && field[yco][xco] != '4')
+{
+
+//printf("\n%c\n",field[yco][xco]);
+printf("\nKilling cell at (%d,%d)\n",xco,yco);
+field[yco][xco] = '-';
+p3Turn = p3Turn - 1;
+
+}
+//end cut
+else
+{
+printf("\nError that is not your Cell\n");
+}
+
+}
+
+}
+
+
+
+}
+//end kcut
+
+//start s cut
+//spawn cell
+if(pChoice == 's')
+{
+//start cut
+printf("\nEnter X-coord of cell to kill or b to go back:\n");
+scanf("%s", xcoBuff);
+
+if((char)xcoBuff[0] != 'b')
+{
+xco = atoi(xcoBuff);
+printf("\n%d\n",xco);
+
+printf("\nEnter Y-coord of cell to kill or b to go back:");
+scanf("%s",ycoBuff);
+
+
+if((char)ycoBuff[0] != 'b')
+{
+
+
+yco = atoi(ycoBuff);
+printf("\nSpawning cell at (%d,%d)\n",xco,yco);
+field[yco][xco] = '3';
+p3Turn = p3Turn - 1;
+
+}
+
+}
+
+}
+//end s cut
+
+
+}
 printf("\nPlayer4's Turn:");
+while(p4Turn != 0)
+{
+printf("\nMoves Remaining: %d\n", p4Turn);
+printf("\nPlayer4's Turn:");
+scanf("%s", choice);
+pChoice = choice[0];
+//display grid
+
+
+//vcut
+if(pChoice == 'v')
+{
+printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+
+for(int a = 0; a < ySize; a++)
+{
+
+for(int b = 0; b < xSize; b++)
+{
+
+printf("|%c|",field[a][b]);
+
+}
+printf("\n");
+}
+
+}
+//end vcut
+
+//start kcut
+//kill one of your cells
+if(pChoice == 'k')
+{
+//start cut
+printf("\nEnter X-coord of cell to kill or b to go back:\n");
+scanf("%s", xcoBuff);
+
+if((char)xcoBuff[0] != 'b')
+{
+xco = atoi(xcoBuff);
+printf("\n%d\n",xco);
+
+printf("\nEnter Y-coord of cell to kill or b to go back:");
+scanf("%s",ycoBuff);
+
+
+if((char)ycoBuff[0] != 'b')
+{
+yco = atoi(ycoBuff);
+
+if(field[yco][xco] != '1' && field[yco][xco] != '3' && field[yco][xco] != '2')
+{
+printf("\nKilling cell at (%d,%d)\n",xco,yco);
+field[yco][xco] = '-';
+p4Turn = p4Turn - 1;
+}
+//end cut
+else
+{
+printf("\nError that is not your Cell\n");
+}
+
+}
+
+}
+
+
+
+}
+//end kcut
+
+//start s cut
+//spawn cell
+if(pChoice == 's')
+{
+//start cut
+printf("\nEnter X-coord of cell to kill or b to go back:\n");
+scanf("%s", xcoBuff);
+
+if((char)xcoBuff[0] != 'b')
+{
+xco = atoi(xcoBuff);
+printf("\n%d\n",xco);
+
+printf("\nEnter Y-coord of cell to kill or b to go back:");
+scanf("%s",ycoBuff);
+
+
+if((char)ycoBuff[0] != 'b')
+{
+
+
+yco = atoi(ycoBuff);
+
+
+if(field[yco][xco] != '-')
+{
+printf("\nError there is already a live cell there\n");
+}
+
+if(field[yco][xco] == '-')
+{
+printf("\nSpawning cell at (%d,%d)\n",xco,yco);
+field[yco][xco] = '4';
+p4Turn = p4Turn - 1;
+}
+
+
+
+}
+
+}
+
+}
+//end s cut
+
+
+//p4Turn = p4Turn - 1;
+}
+//end p2
+
+
+//code to check for deaths
+p1c = 0;
+p2c = 0;
+p3c = 0;
+	for(int a = 0; a < ySize; a++){
+		for(int b = 0; b < xSize; b++){
+
+			if(field[a][b] == '1')
+			{
+			p1c = p1c + 1;
+			}
+
+			if(field[a][b] == '2')
+			{
+			p2c = p2c + 1;
+			}
+
+
+			if(field[a][b] == '3')
+			{
+			p3c = p3c + 1;
+			}
+			
+			
+		
+		}
+	}
+
+
+
+
+}
+//end 2p
+
+
+if(p1c >= p2c && p1c >= p3c && p1c >= p4c)
+{
+printf("\nGame Over Player 1 Wins\n");
+}
+
+if(p2c >= p1c && p2c >= p3c && p2c >= p4c)
+{
+printf("\nGame Over Player 2 Wins\n");
+}
+
+if(p3c >= p1c && p3c >= p2c && p3c >= p4c)
+{
+printf("\nGame Over Player 3 Wins\n");
+}
+
+if(p4c >= p1c && p4c >= p2c && p4c >= p3c)
+{
+printf("\nGame Over Player 3 Wins\n");
+}
+
+
+
 
 }
 
