@@ -337,11 +337,14 @@ void getInput(){
 	//end of first section
 	
 
+//start super mega cut
 	for(int i = 0; i < numCycles; i++)
 	{
-
+		//exclude this
 		//print cycles
 		printf("\nCycle %d\n", i);
+
+//need this
 		for(int a = 0; a < ySize; a++)
 		{
 
@@ -367,6 +370,8 @@ void getInput(){
 
 			printf("\n");
 		}
+//end need
+
 		//printf("\nxStart:%d yStart:%d \n",xStart,yStart);
 		printf("\n\n");
 	
@@ -425,6 +430,8 @@ void getInput(){
 			}
 			//end new
 		*/	
+
+//end exclude
 			for(int a = 0; a < ySize - 1; a++)
 			{
 
@@ -436,42 +443,42 @@ void getInput(){
 				{
 					liveNeigh = 0;
 
-					if(field[a+1][b] == '+')
+					if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
 					{
 						liveNeigh = liveNeigh + 1;
 					}
 
-					if(field[a][b+1] == '+')
+					if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
 					{
 						liveNeigh = liveNeigh + 1;
 					}
 
-					if(field[a-1][b] == '+')
+					if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
 					{
 						liveNeigh = liveNeigh + 1;
 					}
 
-					if(field[a][b-1] == '+')
+					if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
 					{
 						liveNeigh = liveNeigh + 1;
 					}
 
-					if(field[a+1][b+1] == '+')
+					if(field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4' || field[a+1][b+1] == '+')
 					{
 						liveNeigh = liveNeigh + 1;
 					}
 
-					if(field[a-1][b-1] == '+')
+					if(field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4' || field[a-1][b-1] == '+')
 					{
 						liveNeigh = liveNeigh + 1;
 					}
 
-					if(field[a-1][b+1] == '+')
+					if(field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4' || field[a-1][b+1] == '+')
 					{
 						liveNeigh = liveNeigh + 1;
 					}
 
-					if(field[a+1][b-1] == '+')
+					if(field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4' || field[a+1][b-1] == '+')
 					{
 						liveNeigh = liveNeigh + 1;
 					}
@@ -499,46 +506,46 @@ void getInput(){
 
 
 
-				if(field[a][b] == '+')
+				if(field[a][b] == '1' || field[a][b] == '2' || field[a][b] == '3' || field[a][b] == '4' || field[a][b] == '+')
 				{
 					liveNeigh = 0;
 					//check 1
-					if(field[a+1][b] == '+' || field[a+1][b] == 'm')
+					if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
 					{
 						liveNeigh = liveNeigh + 1;
 					}
 					//check 2
-					if(field[a+1][b+1] == '+' || field[a+1][b+1] == 'm')
+					if(field[a+1][b+1] == '+' || field[a+1][b+1] == 'm' || field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4')
 					{
 						liveNeigh = liveNeigh + 1;
 					}
-					//chck 3
-					if(field[a-1][b-1] == '+' || field[a-1][b-1] == 'm')
+					//check 3
+					if(field[a-1][b-1] == '+' || field[a-1][b-1] == 'm' || field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4')
 					{
 						liveNeigh = liveNeigh + 1;
 					}
 					//check 4
-					if(field[a][b+1] == '+' || field[a][b+1] == 'm')
+					if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
 					{
 						liveNeigh = liveNeigh + 1;
 					}
 					//check 5
-					if(field[a-1][b] == '+' || field[a-1][b] == 'm')
+					if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
 					{
 						liveNeigh = liveNeigh + 1;
 					}
 					//check 6
-					if(field[a][b-1] == '+' || field[a][b-1] == 'm')
+					if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
 					{
 						liveNeigh = liveNeigh + 1;
 					}
 					//check 7
-					if(field[a-1][b+1] == '+' || field[a-1][b+1] == 'm')
+					if(field[a-1][b+1] == '+' || field[a-1][b+1] == 'm' || field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4')
 					{
 						liveNeigh = liveNeigh + 1;
 					}
 					//check 8
-					if(field[a+1][b-1] == '+' || field[a+1][b-1] == 'm')
+					if(field[a+1][b-1] == '+' || field[a+1][b-1] == 'm' || field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4')
 					{
 						liveNeigh = liveNeigh + 1;
 					}
@@ -581,7 +588,7 @@ void getInput(){
 
 	}
 
-
+//end super mega cut
 
 
 	return;
@@ -892,6 +899,200 @@ p2Turn = p2Turn - 1;
 }
 
 //code to apply rules goes here
+
+
+
+
+//start super mega cut
+	for(int i = 0; i < numCycles; i++)
+	{
+			for(int a = 0; a < ySize - 1; a++)
+			{
+
+			for(int b = 0; b < xSize - 1; b++)
+			{
+
+				//start
+				if(field[a][b] == '-')
+				{
+					liveNeigh = 0;
+
+					if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4' || field[a+1][b+1] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4' || field[a-1][b-1] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4' || field[a-1][b+1] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4' || field[a+1][b-1] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(liveNeigh == 3)
+					{
+						//did this for important reasons
+						field[a][b] = 'p';
+				printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+
+					}
+
+				}
+
+			//end add phase
+		}
+		}
+
+
+		for(int a = 0; a < ySize - 1; a++)
+		{
+
+			for(int b = 0; b < xSize - 1; b++)
+			{
+
+
+
+				if(field[a][b] == '1' || field[a][b] == '2' || field[a][b] == '3' || field[a][b] == '4' || field[a][b] == '+')
+				{
+					liveNeigh = 0;
+					//check 1
+					if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 2
+					if(field[a+1][b+1] == '+' || field[a+1][b+1] == 'm' || field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 3
+					if(field[a-1][b-1] == '+' || field[a-1][b-1] == 'm' || field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 4
+					if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 5
+					if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 6
+					if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 7
+					if(field[a-1][b+1] == '+' || field[a-1][b+1] == 'm' || field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 8
+					if(field[a+1][b-1] == '+' || field[a+1][b-1] == 'm' || field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(liveNeigh > 3 || liveNeigh <=1)
+					{
+
+						field[a][b] = 'm';
+
+					}
+					printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+
+
+				}//end of first loop
+
+
+			}
+/*
+			for(int x = 0; x < ySize; x++)
+			{
+				for(int y = 0; y < xSize; y++)
+				{
+					if(field[x][y] == 'p')
+					{
+						field[x][y] = '+';
+					}
+
+					if(field[x][y] == 'm')
+					{
+						field[x][y] = '-';
+					}
+
+				}
+			}
+
+			*/
+		}
+
+
+
+	}
+
+//end super mega cut
+
+
+//need this
+		for(int a = 0; a < ySize; a++)
+		{
+
+			for(int b = 0; b < xSize; b++)
+			{
+
+				
+				if(field[a][b] == 'm')
+				{
+				field[a][b] = '-';
+				}
+
+				if(field[a][b] == 'p')
+				{
+				field[a][b] = '+';
+				}
+				
+
+				//printf("|%c|",field[a][b]);
+
+			}
+
+		}
+//end need
+//end actual cut
+
+
 
 //code to check for deaths
 p1c = 0;
@@ -1397,6 +1598,198 @@ p3Turn = p3Turn - 1;
 
 
 }
+
+
+
+//start super mega cut
+	for(int i = 0; i < numCycles; i++)
+	{
+			for(int a = 0; a < ySize - 1; a++)
+			{
+
+			for(int b = 0; b < xSize - 1; b++)
+			{
+
+				//start
+				if(field[a][b] == '-')
+				{
+					liveNeigh = 0;
+
+					if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4' || field[a+1][b+1] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4' || field[a-1][b-1] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4' || field[a-1][b+1] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4' || field[a+1][b-1] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(liveNeigh == 3)
+					{
+						//did this for important reasons
+						field[a][b] = 'p';
+				printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+
+					}
+
+				}
+
+			//end add phase
+		}
+		}
+
+
+		for(int a = 0; a < ySize - 1; a++)
+		{
+
+			for(int b = 0; b < xSize - 1; b++)
+			{
+
+
+
+				if(field[a][b] == '1' || field[a][b] == '2' || field[a][b] == '3' || field[a][b] == '4' || field[a][b] == '+')
+				{
+					liveNeigh = 0;
+					//check 1
+					if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 2
+					if(field[a+1][b+1] == '+' || field[a+1][b+1] == 'm' || field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 3
+					if(field[a-1][b-1] == '+' || field[a-1][b-1] == 'm' || field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 4
+					if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 5
+					if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 6
+					if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 7
+					if(field[a-1][b+1] == '+' || field[a-1][b+1] == 'm' || field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 8
+					if(field[a+1][b-1] == '+' || field[a+1][b-1] == 'm' || field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(liveNeigh > 3 || liveNeigh <=1)
+					{
+
+						field[a][b] = 'm';
+
+					}
+					printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+
+
+				}//end of first loop
+
+
+			}
+/*
+			for(int x = 0; x < ySize; x++)
+			{
+				for(int y = 0; y < xSize; y++)
+				{
+					if(field[x][y] == 'p')
+					{
+						field[x][y] = '+';
+					}
+
+					if(field[x][y] == 'm')
+					{
+						field[x][y] = '-';
+					}
+
+				}
+			}
+
+			*/
+		}
+
+
+
+	}
+
+//end super mega cut
+
+
+//need this
+		for(int a = 0; a < ySize; a++)
+		{
+
+			for(int b = 0; b < xSize; b++)
+			{
+
+				
+				if(field[a][b] == 'm')
+				{
+				field[a][b] = '-';
+				}
+
+				if(field[a][b] == 'p')
+				{
+				field[a][b] = '+';
+				}
+				
+
+				//printf("|%c|",field[a][b]);
+
+			}
+
+		}
+//end need
+//end actual cut
+
 
 
 //code to check for deaths
@@ -2052,6 +2445,198 @@ p4Turn = p4Turn - 1;
 //end p2
 
 
+
+//start super mega cut
+	for(int i = 0; i < numCycles; i++)
+	{
+			for(int a = 0; a < ySize - 1; a++)
+			{
+
+			for(int b = 0; b < xSize - 1; b++)
+			{
+
+				//start
+				if(field[a][b] == '-')
+				{
+					liveNeigh = 0;
+
+					if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4' || field[a+1][b+1] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4' || field[a-1][b-1] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4' || field[a-1][b+1] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4' || field[a+1][b-1] == '+')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(liveNeigh == 3)
+					{
+						//did this for important reasons
+						field[a][b] = 'p';
+				printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+
+					}
+
+				}
+
+			//end add phase
+		}
+		}
+
+
+		for(int a = 0; a < ySize - 1; a++)
+		{
+
+			for(int b = 0; b < xSize - 1; b++)
+			{
+
+
+
+				if(field[a][b] == '1' || field[a][b] == '2' || field[a][b] == '3' || field[a][b] == '4' || field[a][b] == '+')
+				{
+					liveNeigh = 0;
+					//check 1
+					if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 2
+					if(field[a+1][b+1] == '+' || field[a+1][b+1] == 'm' || field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 3
+					if(field[a-1][b-1] == '+' || field[a-1][b-1] == 'm' || field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 4
+					if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 5
+					if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 6
+					if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 7
+					if(field[a-1][b+1] == '+' || field[a-1][b+1] == 'm' || field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+					//check 8
+					if(field[a+1][b-1] == '+' || field[a+1][b-1] == 'm' || field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4')
+					{
+						liveNeigh = liveNeigh + 1;
+					}
+
+					if(liveNeigh > 3 || liveNeigh <=1)
+					{
+
+						field[a][b] = 'm';
+
+					}
+					printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+
+
+				}//end of first loop
+
+
+			}
+/*
+			for(int x = 0; x < ySize; x++)
+			{
+				for(int y = 0; y < xSize; y++)
+				{
+					if(field[x][y] == 'p')
+					{
+						field[x][y] = '+';
+					}
+
+					if(field[x][y] == 'm')
+					{
+						field[x][y] = '-';
+					}
+
+				}
+			}
+
+			*/
+		}
+
+
+
+	}
+
+//end super mega cut
+
+
+//need this
+		for(int a = 0; a < ySize; a++)
+		{
+
+			for(int b = 0; b < xSize; b++)
+			{
+
+				
+				if(field[a][b] == 'm')
+				{
+				field[a][b] = '-';
+				}
+
+				if(field[a][b] == 'p')
+				{
+				field[a][b] = '+';
+				}
+				
+
+				//printf("|%c|",field[a][b]);
+
+			}
+
+		}
+//end need
+//end actual cut
+
+
+
 //code to check for deaths
 p1c = 0;
 p2c = 0;
@@ -2080,7 +2665,7 @@ p3c = 0;
 		}
 	}
 
-
+//apply rules here
 
 
 }
