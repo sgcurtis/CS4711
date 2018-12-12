@@ -1,3 +1,6 @@
+//CU_ASSERT_EQUAL(blank,blank);
+//asserts that blank is equal tto blank
+
 /*
    ============================================================================
 Name        : Conway.c
@@ -13,6 +16,7 @@ Description : Hello World in C, Ansi-style
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <CUnit/CUnit.h>
 
 //variables for recording user's input on size of field, cell placement, etc.
 //names should be self explanitonway's Game of Life\n\n");
@@ -131,6 +135,9 @@ void ReversePrint() {
 
 
 void getInput(){
+
+	//CU_ASSERT_EQUAL(1,1);
+
 	//rules and input section
 	printf("Welcome to Conway's Game of Life\n");
 	printf("Rules:\n");
@@ -154,6 +161,8 @@ void getInput(){
 
 	}
 
+
+
 	//if we dont use infinite field do this	
 	if(infinite == 0)
 	{
@@ -163,6 +172,7 @@ void getInput(){
 		printf("Enter Height: \n");
 		scanf("%s", heightBuff);
 		ySize = atoi(heightBuff);
+		
 	}
 
 	//if we have an infinite field do this
@@ -200,6 +210,7 @@ void getInput(){
 	{
 	printf("Cycle by step or by time? (s for step t for time): \n");
 	scanf("%s", stepbuff);
+	//CU_ASSERT_EQUAL(numPlayers,1);
 	
 
 	if(stepbuff[0] == 's' || stepbuff[0] == 'S')
@@ -768,6 +779,7 @@ void getInput(){
 						//did this for important reasons
 						field[a][b] = 'p';
 				//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+						//CU_ASSERT_EQUAL('p',field[a][b]);
 
 					}
 
@@ -1172,6 +1184,7 @@ void getInput(){
 					{
 
 						field[a][b] = 'm';
+						//CU_ASSERT_EQUAL('m',field[a][b]);
 
 					}
 					//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);

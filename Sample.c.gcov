@@ -773,7 +773,7 @@
         -:  767:					{
         -:  768:						//did this for important reasons
        19:  769:						field[a][b] = 'p';
-       19:  770:				printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+       19:  770:				//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
         -:  771:
         -:  772:					}
         -:  773:
@@ -1180,7 +1180,7 @@
        11: 1174:						field[a][b] = 'm';
         -: 1175:
         -: 1176:					}
-       40: 1177:					printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+       40: 1177:					//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
         -: 1178:
         -: 1179:
         -: 1180:				}//end of first loop
@@ -1327,7 +1327,7 @@
         1: 1321:if((char)xcoBuff[0] != 'b')
         -: 1322:{
         1: 1323:xco = atoi(xcoBuff);
-        1: 1324:printf("\n%d\n",xco);
+        1: 1324://printf("\n%d\n",xco);
         -: 1325:
         1: 1326:printf("\nEnter Y-coord of cell to kill or b to go back:");
         1: 1327:scanf("%s",ycoBuff);
@@ -1368,7 +1368,7 @@
         5: 1362:if((char)xcoBuff[0] != 'b')
         -: 1363:{
         5: 1364:xco = atoi(xcoBuff);
-        5: 1365:printf("\n%d\n",xco);
+        5: 1365://printf("\n%d\n",xco);
         -: 1366:
         5: 1367:printf("\nEnter Y-coord of cell to spawn or b to go back:");
         5: 1368:scanf("%s",ycoBuff);
@@ -1444,7 +1444,7 @@
         1: 1438:if((char)xcoBuff[0] != 'b')
         -: 1439:{
         1: 1440:xco = atoi(xcoBuff);
-        1: 1441:printf("\n%d\n",xco);
+        1: 1441://printf("\n%d\n",xco);
         -: 1442:
         1: 1443:printf("\nEnter Y-coord of cell to kill or b to go back:");
         1: 1444:scanf("%s",ycoBuff);
@@ -1485,7 +1485,7 @@
         5: 1479:if((char)xcoBuff[0] != 'b')
         -: 1480:{
         5: 1481:xco = atoi(xcoBuff);
-        5: 1482:printf("\n%d\n",xco);
+        5: 1482://printf("\n%d\n",xco);
         -: 1483:
         5: 1484:printf("\nEnter Y-coord of cell to spawn or b to go back:");
         5: 1485:scanf("%s",ycoBuff);
@@ -1585,7 +1585,7 @@
         -: 1579:					{
         -: 1580:						//did this for important reasons
     #####: 1581:						field[a][b] = 'p';
-    #####: 1582:				printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+    #####: 1582:				//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
         -: 1583:
         -: 1584:					}
         -: 1585:
@@ -1654,7 +1654,7 @@
         2: 1648:						field[a][b] = 'm';
         -: 1649:
         -: 1650:					}
-        4: 1651:					printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+        4: 1651:					//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
         -: 1652:
         -: 1653:
         -: 1654:				}//end of first loop
@@ -1877,7 +1877,7 @@
         -: 1871://vcut
     #####: 1872:if(pChoice == 'v')
         -: 1873:{
-    #####: 1874:printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+    #####: 1874://printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
         -: 1875:
     #####: 1876:for(int a = 0; a < ySize; a++)
         -: 1877:{
@@ -1905,7 +1905,7 @@
     #####: 1899:if((char)xcoBuff[0] != 'b')
         -: 1900:{
     #####: 1901:xco = atoi(xcoBuff);
-    #####: 1902:printf("\n%d\n",xco);
+    #####: 1902://printf("\n%d\n",xco);
         -: 1903:
     #####: 1904:printf("\nEnter Y-coord of cell to kill or b to go back:");
     #####: 1905:scanf("%s",ycoBuff);
@@ -1946,7 +1946,7 @@
     #####: 1940:if((char)xcoBuff[0] != 'b')
         -: 1941:{
     #####: 1942:xco = atoi(xcoBuff);
-    #####: 1943:printf("\n%d\n",xco);
+    #####: 1943://printf("\n%d\n",xco);
         -: 1944:
     #####: 1945:printf("\nEnter Y-coord of cell to kill or b to go back:");
     #####: 1946:scanf("%s",ycoBuff);
@@ -1994,7 +1994,7 @@
         -: 1988://vcut
     #####: 1989:if(pChoice == 'v')
         -: 1990:{
-    #####: 1991:printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+    #####: 1991://printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
         -: 1992:
     #####: 1993:for(int a = 0; a < ySize; a++)
         -: 1994:{
@@ -2022,7 +2022,7 @@
     #####: 2016:if((char)xcoBuff[0] != 'b')
         -: 2017:{
     #####: 2018:xco = atoi(xcoBuff);
-    #####: 2019:printf("\n%d\n",xco);
+    #####: 2019://printf("\n%d\n",xco);
         -: 2020:
     #####: 2021:printf("\nEnter Y-coord of cell to kill or b to go back:");
     #####: 2022:scanf("%s",ycoBuff);
@@ -2063,7 +2063,7 @@
     #####: 2057:if((char)xcoBuff[0] != 'b')
         -: 2058:{
     #####: 2059:xco = atoi(xcoBuff);
-    #####: 2060:printf("\n%d\n",xco);
+    #####: 2060://printf("\n%d\n",xco);
         -: 2061:
     #####: 2062:printf("\nEnter Y-coord of cell to kill or b to go back:");
     #####: 2063:scanf("%s",ycoBuff);
@@ -2114,7 +2114,7 @@
         -: 2108://vcut
     #####: 2109:if(pChoice == 'v')
         -: 2110:{
-    #####: 2111:printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+    #####: 2111://printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
         -: 2112:
     #####: 2113:for(int a = 0; a < ySize; a++)
         -: 2114:{
@@ -2142,7 +2142,7 @@
     #####: 2136:if((char)xcoBuff[0] != 'b')
         -: 2137:{
     #####: 2138:xco = atoi(xcoBuff);
-    #####: 2139:printf("\n%d\n",xco);
+    #####: 2139://printf("\n%d\n",xco);
         -: 2140:
     #####: 2141:printf("\nEnter Y-coord of cell to kill or b to go back:");
     #####: 2142:scanf("%s",ycoBuff);
@@ -2187,7 +2187,7 @@
     #####: 2181:if((char)xcoBuff[0] != 'b')
         -: 2182:{
     #####: 2183:xco = atoi(xcoBuff);
-    #####: 2184:printf("\n%d\n",xco);
+    #####: 2184://printf("\n%d\n",xco);
         -: 2185:
     #####: 2186:printf("\nEnter Y-coord of cell to kill or b to go back:");
     #####: 2187:scanf("%s",ycoBuff);
@@ -2637,7 +2637,7 @@
         2: 2631:if((char)xcoBuff[0] != 'b')
         -: 2632:{
         2: 2633:xco = atoi(xcoBuff);
-        2: 2634:printf("\n%d\n",xco);
+        2: 2634://printf("\n%d\n",xco);
         -: 2635:
         2: 2636:printf("\nEnter Y-coord of cell to kill or b to go back:");
         2: 2637:scanf("%s",ycoBuff);
@@ -2679,7 +2679,7 @@
         4: 2673:if((char)xcoBuff[0] != 'b')
         -: 2674:{
         4: 2675:xco = atoi(xcoBuff);
-        4: 2676:printf("\n%d\n",xco);
+        4: 2676://printf("\n%d\n",xco);
         -: 2677:
         4: 2678:printf("\nEnter Y-coord of cell to kill or b to go back:");
         4: 2679:scanf("%s",ycoBuff);
@@ -2756,7 +2756,7 @@
         4: 2750:if((char)xcoBuff[0] != 'b')
         -: 2751:{
         4: 2752:xco = atoi(xcoBuff);
-        4: 2753:printf("\n%d\n",xco);
+        4: 2753://printf("\n%d\n",xco);
         -: 2754:
         4: 2755:printf("\nEnter Y-coord of cell to kill or b to go back:");
         4: 2756:scanf("%s",ycoBuff);
@@ -2797,7 +2797,7 @@
         2: 2791:if((char)xcoBuff[0] != 'b')
         -: 2792:{
         2: 2793:xco = atoi(xcoBuff);
-        2: 2794:printf("\n%d\n",xco);
+        2: 2794://printf("\n%d\n",xco);
         -: 2795:
         2: 2796:printf("\nEnter Y-coord of cell to kill or b to go back:");
         2: 2797:scanf("%s",ycoBuff);
@@ -2877,7 +2877,7 @@
         3: 2871:if((char)xcoBuff[0] != 'b')
         -: 2872:{
         3: 2873:xco = atoi(xcoBuff);
-        3: 2874:printf("\n%d\n",xco);
+        3: 2874://printf("\n%d\n",xco);
         -: 2875:
         3: 2876:printf("\nEnter Y-coord of cell to kill or b to go back:");
         3: 2877:scanf("%s",ycoBuff);
@@ -2922,7 +2922,7 @@
         3: 2916:if((char)xcoBuff[0] != 'b')
         -: 2917:{
         3: 2918:xco = atoi(xcoBuff);
-        3: 2919:printf("\n%d\n",xco);
+        3: 2919://printf("\n%d\n",xco);
         -: 2920:
         3: 2921:printf("\nEnter Y-coord of cell to kill or b to go back:");
         3: 2922:scanf("%s",ycoBuff);
@@ -2987,7 +2987,7 @@
         4: 2981:if((char)xcoBuff[0] != 'b')
         -: 2982:{
         4: 2983:xco = atoi(xcoBuff);
-        4: 2984:printf("\n%d\n",xco);
+        4: 2984://printf("\n%d\n",xco);
         -: 2985:
         4: 2986:printf("\nEnter Y-coord of cell to kill or b to go back:");
         4: 2987:scanf("%s",ycoBuff);
@@ -3029,7 +3029,7 @@
         2: 3023:if((char)xcoBuff[0] != 'b')
         -: 3024:{
         2: 3025:xco = atoi(xcoBuff);
-        2: 3026:printf("\n%d\n",xco);
+        2: 3026://printf("\n%d\n",xco);
         -: 3027:
         2: 3028:printf("\nEnter Y-coord of cell to kill or b to go back:");
         2: 3029:scanf("%s",ycoBuff);
