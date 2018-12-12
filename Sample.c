@@ -30,10 +30,6 @@ char heightBuff[8];
 char cycleBuff[8];
 char xStartBuff[8];
 char yStartBuff[8];
-//char* xStartBuff2[8];
-//char* yStartBuff2[8];
-//char* xStartBuff3[8];
-//char* yStartBuff3[8];
 char* path[10000];
 char coordList[1000];
 int xList[10000];
@@ -134,51 +130,6 @@ void ReversePrint() {
 }
 
 
-
-//int main(void) {
-//variables for recording user's input on size of field, cell placement, etc.
-//names should be self explanitonway's Game of Life\n\n");
-/*	int xSize = 0;
-	int ySize = 0;
-	int numCycles = 1;
-	int xStart = 0;
-	int yStart = 0;
-	int xStart2 = 0;
-	int yStart2 = 0;
-	int xStart3 = 0;
-	int yStart3 = 0;
-	char* widthBuff[8];
-	char* heightBuff[8];
-	char* cycleBuff[8];
-	char* xStartBuff[8];
-	char* yStartBuff[8];
-	char* xStartBuff2[8];
-	char* yStartBuff2[8];
-	char* xStartBuff3[8];
-	char* yStartBuff3[8];
-	char* path[10000];
-	char coordList[1000];
-	int xList[10000];
-	int yList[10000];
-	FILE* fp;
-	char* fieldpref[8];
-	char* wrappref[8];
-	int defSize = 40;
-	int infinite = 0;
-	int wrap = 0;*/
-//void initField(int x, int y){
-//field[x][y];
-
-//}
-
-
-
-
-
-
-
-
-
 void getInput(){
 	//rules and input section
 	printf("Welcome to Conway's Game of Life\n");
@@ -227,7 +178,7 @@ void getInput(){
 	printf("Enter preferred field wrap style: T = toroidal, S = standard\n");
 	scanf("%s", wrappref);
 
-	if(wrappref[0] == "T" || wrappref[0] == "t")
+	if(wrappref[0] == 'T' || wrappref[0] == 't')
 	{
 		wrap = 1;
 	}
@@ -432,57 +383,386 @@ void getInput(){
 		*/	
 
 //end exclude
-			for(int a = 0; a < ySize - 1; a++)
+			for(int a = 0; a < ySize; a++)
 			{
 
-			for(int b = 0; b < xSize - 1; b++)
+			for(int b = 0; b < xSize; b++)
 			{
 
 				//start
 				if(field[a][b] == '-')
 				{
 					liveNeigh = 0;
+					//Wraparound if a = 0 and b = 0
+					if(wrap == 1 && a == 0 && b == 0){
+						if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
 
-					if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
-					{
-						liveNeigh = liveNeigh + 1;
+						if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+	
+						if(field[ySize-1][b] == '1' || field[ySize-1][b] == '2' || field[ySize-1][b] == '3' || field[ySize-1][b] == '4' || field[ySize-1][b] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a][xSize-1] == '1' || field[a][xSize-1] == '2' || field[a][xSize-1] == '3' || field[a][xSize-1] == '4' || field[a][xSize-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4' || field[a+1][b+1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[ySize-1][xSize-1] == '1' || field[ySize-1][xSize-1] == '2' || field[ySize-1][xSize-1] == '3' || field[ySize-1][xSize-1] == '4' || field[ySize-1][xSize-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[ySize-1][b+1] == '1' || field[ySize-1][b+1] == '2' || field[ySize-1][b+1] == '3' || field[ySize-1][b+1] == '4' || field[ySize-1][b+1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a+1][xSize-1] == '1' || field[a+1][xSize-1] == '2' || field[a+1][xSize-1] == '3' || field[a+1][xSize-1] == '4' || field[a+1][xSize-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//Wraparound if a = 0 and b = xSize
+					}else if(wrap == 1 && a == 0 && b == xSize-1){
+						if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a][0] == '1' || field[a][0] == '2' || field[a][0] == '3' || field[a][0] == '4' || field[a][0] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+	
+						if(field[ySize-1][b] == '1' || field[ySize-1][b] == '2' || field[ySize-1][b] == '3' || field[ySize-1][b] == '4' || field[ySize-1][b] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a+1][0] == '1' || field[a+1][0] == '2' || field[a+1][0] == '3' || field[a+1][0] == '4' || field[a+1][0] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[ySize-1][b-1] == '1' || field[ySize-1][b-1] == '2' || field[ySize-1][b-1] == '3' || field[ySize-1][b-1] == '4' || field[ySize-1][b-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[ySize-1][0] == '1' || field[ySize-1][0] == '2' || field[ySize-1][0] == '3' || field[ySize-1][0] == '4' || field[ySize-1][0] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4' || field[a+1][b-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//Wraparound if a = ySize and b = 0
+					}else if(wrap == 1 && a == ySize-1 && b == 0){
+						if(field[0][b] == '1' || field[0][b] == '2' || field[0][b] == '3' || field[0][b] == '4' || field[0][b] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+	
+						if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a][xSize-1] == '1' || field[a][xSize-1] == '2' || field[a][xSize-1] == '3' || field[a][xSize-1] == '4' || field[a][xSize-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[0][b+1] == '1' || field[0][b+1] == '2' || field[0][b+1] == '3' || field[0][b+1] == '4' || field[0][b+1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a-1][xSize-1] == '1' || field[a-1][xSize-1] == '2' || field[a-1][xSize-1] == '3' || field[a-1][xSize-1] == '4' || field[a-1][xSize-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4' || field[a-1][b+1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[0][xSize-1] == '1' || field[0][xSize-1] == '2' || field[0][xSize-1] == '3' || field[0][xSize-1] == '4' || field[0][xSize-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//Wraparound if a = ySize and b = xSize
+					}else if(wrap == 1 && a == ySize-1 && b == xSize-1){
+						if(field[0][b] == '1' || field[0][b] == '2' || field[0][b] == '3' || field[0][b] == '4' || field[0][b] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a][0] == '1' || field[a][0] == '2' || field[a][0] == '3' || field[a][0] == '4' || field[a][0] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+	
+						if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[0][0] == '1' || field[0][0] == '2' || field[0][0] == '3' || field[0][0] == '4' || field[0][0] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4' || field[a-1][b-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a-1][0] == '1' || field[a-1][0] == '2' || field[a-1][0] == '3' || field[a-1][0] == '4' || field[a-1][0] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[0][b-1] == '1' || field[0][b-1] == '2' || field[0][b-1] == '3' || field[0][b-1] == '4' || field[0][b-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//Wraparound if a = 0
+					}else if(wrap == 1 && a == 0){
+						if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+	
+						if(field[ySize-1][b] == '1' || field[ySize-1][b] == '2' || field[ySize-1][b] == '3' || field[ySize-1][b] == '4' || field[ySize-1][b] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4' || field[a+1][b+1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[ySize-1][b-1] == '1' || field[ySize-1][b-1] == '2' || field[ySize-1][b-1] == '3' || field[ySize-1][b-1] == '4' || field[ySize-1][b-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[ySize-1][b+1] == '1' || field[ySize-1][b+1] == '2' || field[ySize-1][b+1] == '3' || field[ySize-1][b+1] == '4' || field[ySize-1][b+1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4' || field[a+1][b-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//Wraparound if a = ySize
+					}else if(wrap == 1 && a == ySize-1){
+						if(field[0][b] == '1' || field[0][b] == '2' || field[0][b] == '3' || field[0][b] == '4' || field[0][b] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+	
+						if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[0][b+1] == '1' || field[0][b+1] == '2' || field[0][b+1] == '3' || field[0][b+1] == '4' || field[0][b+1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4' || field[a-1][b-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4' || field[a-1][b+1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[0][b-1] == '1' || field[0][b-1] == '2' || field[0][b-1] == '3' || field[0][b-1] == '4' || field[0][b-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//Wraparound if b = 0
+					}else if(wrap == 1 && b == 0){
+						if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+	
+						if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a][xSize-1] == '1' || field[a][xSize-1] == '2' || field[a][xSize-1] == '3' || field[a][xSize-1] == '4' || field[a][xSize-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4' || field[a+1][b+1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a-1][xSize-1] == '1' || field[a-1][xSize-1] == '2' || field[a-1][xSize-1] == '3' || field[a-1][xSize-1] == '4' || field[a-1][xSize-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4' || field[a-1][b+1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a+1][xSize-1] == '1' || field[a+1][xSize-1] == '2' || field[a+1][xSize-1] == '3' || field[a+1][xSize-1] == '4' || field[a+1][xSize-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//wraparound if b = xSize
+					}else if(wrap == 1 && b == xSize-1){
+						if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a][0] == '1' || field[a][0] == '2' || field[a][0] == '3' || field[a][0] == '4' || field[a][0] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+	
+						if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a+1][0] == '1' || field[a+1][0] == '2' || field[a+1][0] == '3' || field[a+1][0] == '4' || field[a+1][0] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4' || field[a-1][b-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a-1][0] == '1' || field[a-1][0] == '2' || field[a-1][0] == '3' || field[a-1][0] == '4' || field[a-1][0] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4' || field[a+1][b-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//No Wraparound
+					}else{
+						if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+	
+						if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4' || field[a+1][b+1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4' || field[a-1][b-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4' || field[a-1][b+1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+
+						if(field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4' || field[a+1][b-1] == '+')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
 					}
-
-					if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
-					{
-						liveNeigh = liveNeigh + 1;
-					}
-
-					if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
-					{
-						liveNeigh = liveNeigh + 1;
-					}
-
-					if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
-					{
-						liveNeigh = liveNeigh + 1;
-					}
-
-					if(field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4' || field[a+1][b+1] == '+')
-					{
-						liveNeigh = liveNeigh + 1;
-					}
-
-					if(field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4' || field[a-1][b-1] == '+')
-					{
-						liveNeigh = liveNeigh + 1;
-					}
-
-					if(field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4' || field[a-1][b+1] == '+')
-					{
-						liveNeigh = liveNeigh + 1;
-					}
-
-					if(field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4' || field[a+1][b-1] == '+')
-					{
-						liveNeigh = liveNeigh + 1;
-					}
-
 					if(liveNeigh == 3)
 					{
 						//did this for important reasons
@@ -498,10 +778,10 @@ void getInput(){
 		}
 
 
-		for(int a = 0; a < ySize - 1; a++)
+		for(int a = 0; a < ySize; a++)
 		{
 
-			for(int b = 0; b < xSize - 1; b++)
+			for(int b = 0; b < xSize; b++)
 			{
 
 
@@ -509,47 +789,385 @@ void getInput(){
 				if(field[a][b] == '1' || field[a][b] == '2' || field[a][b] == '3' || field[a][b] == '4' || field[a][b] == '+')
 				{
 					liveNeigh = 0;
-					//check 1
-					if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
-					{
-						liveNeigh = liveNeigh + 1;
+					//Wraparound if a = 0 and b = 0
+					if(wrap == 1 && a == 0 && b == 0){
+						//check 1
+						if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 2
+						if(field[a+1][b+1] == '+' || field[a+1][b+1] == 'm' || field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 3
+						if(field[ySize-1][xSize-1] == '+' || field[ySize-1][xSize-1] == 'm' || field[ySize-1][xSize-1] == '1' || field[ySize-1][xSize-1] == '2' || field[ySize-1][xSize-1] == '3' || field[ySize-1][xSize-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 4
+						if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 5
+						if(field[ySize-1][b] == '+' || field[ySize-1][b] == 'm' || field[ySize-1][b] == '1' || field[ySize-1][b] == '2' || field[ySize-1][b] == '3' || field[ySize-1][b] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 6
+						if(field[a][xSize-1] == '+' || field[a][xSize-1] == 'm' || field[a][xSize-1] == '1' || field[a][xSize-1] == '2' || field[a][xSize-1] == '3' || field[a][xSize-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 7
+						if(field[ySize-1][b+1] == '+' || field[ySize-1][b+1] == 'm' || field[ySize-1][b+1] == '1' || field[ySize-1][b+1] == '2' || field[ySize-1][b+1] == '3' || field[ySize-1][b+1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 8
+						if(field[a+1][xSize-1] == '+' || field[a+1][xSize-1] == 'm' || field[a+1][xSize-1] == '1' || field[a+1][xSize-1] == '2' || field[a+1][xSize-1] == '3' || field[a+1][xSize-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//Wraparound if a = 0 and b = xSize
+					}else if(wrap == 1 && a == 0 && b == xSize-1){
+						//check 1
+						if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 2
+						if(field[a+1][0] == '+' || field[a+1][0] == 'm' || field[a+1][0] == '1' || field[a+1][0] == '2' || field[a+1][0] == '3' || field[a+1][0] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 3
+						if(field[ySize-1][b-1] == '+' || field[ySize-1][b-1] == 'm' || field[ySize-1][b-1] == '1' || field[ySize-1][b-1] == '2' || field[ySize-1][b-1] == '3' || field[ySize-1][b-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 4
+						if(field[a][0] == '+' || field[a][0] == 'm' || field[a][0] == '1' || field[a][0] == '2' || field[a][0] == '3' || field[a][0] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 5
+						if(field[ySize-1][b] == '+' || field[ySize-1][b] == 'm' || field[ySize-1][b] == '1' || field[ySize-1][b] == '2' || field[ySize-1][b] == '3' || field[ySize-1][b] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 6
+						if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 7
+						if(field[ySize-1][0] == '+' || field[ySize-1][0] == 'm' || field[ySize-1][0] == '1' || field[ySize-1][0] == '2' || field[ySize-1][0] == '3' || field[ySize-1][0] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 8
+						if(field[a+1][b-1] == '+' || field[a+1][b-1] == 'm' || field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//Wraparound if a = ySize and b = 0
+					}else if(wrap == 1 && a == ySize-1 && b == 0){
+						//check 1
+						if(field[0][b] == '+' || field[0][b] == 'm' || field[0][b] == '1' || field[0][b] == '2' || field[0][b] == '3' || field[0][b] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 2
+						if(field[0][b+1] == '+' || field[0][b+1] == 'm' || field[0][b+1] == '1' || field[0][b+1] == '2' || field[0][b+1] == '3' || field[0][b+1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 3
+						if(field[a-1][xSize-1] == '+' || field[a-1][xSize-1] == 'm' || field[a-1][xSize-1] == '1' || field[a-1][xSize-1] == '2' || field[a-1][xSize-1] == '3' || field[a-1][xSize-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 4
+						if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 5
+						if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 6
+						if(field[a][xSize-1] == '+' || field[a][xSize-1] == 'm' || field[a][xSize-1] == '1' || field[a][xSize-1] == '2' || field[a][xSize-1] == '3' || field[a][xSize-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 7
+						if(field[a-1][b+1] == '+' || field[a-1][b+1] == 'm' || field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 8
+						if(field[0][xSize-1] == '+' || field[0][xSize-1] == 'm' || field[0][xSize-1] == '1' || field[0][xSize-1] == '2' || field[0][xSize-1] == '3' || field[0][xSize-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//Wraparound if a = ySize and b = xSize
+					}else if(wrap == 1 && a == ySize-1 && b == xSize-1){
+						//check 1
+						if(field[0][b] == '+' || field[0][b] == 'm' || field[0][b] == '1' || field[0][b] == '2' || field[0][b] == '3' || field[0][b] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 2
+						if(field[0][0] == '+' || field[0][0] == 'm' || field[0][0] == '1' || field[0][0] == '2' || field[0][0] == '3' || field[0][0] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 3
+						if(field[a-1][b-1] == '+' || field[a-1][b-1] == 'm' || field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 4
+						if(field[a][0] == '+' || field[a][0] == 'm' || field[a][0] == '1' || field[a][0] == '2' || field[a][0] == '3' || field[a][0] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 5
+						if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 6
+						if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 7
+						if(field[a-1][0] == '+' || field[a-1][0] == 'm' || field[a-1][0] == '1' || field[a-1][0] == '2' || field[a-1][0] == '3' || field[a-1][0] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 8
+						if(field[0][b-1] == '+' || field[0][b-1] == 'm' || field[0][b-1] == '1' || field[0][b-1] == '2' || field[0][b-1] == '3' || field[0][b-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//Wraparound if a = 0
+					}else if(wrap == 1 && a == 0){
+						//check 1
+						if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 2
+						if(field[a+1][b+1] == '+' || field[a+1][b+1] == 'm' || field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 3
+						if(field[ySize-1][b-1] == '+' || field[ySize-1][b-1] == 'm' || field[ySize-1][b-1] == '1' || field[ySize-1][b-1] == '2' || field[ySize-1][b-1] == '3' || field[ySize-1][b-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 4
+						if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 5
+						if(field[ySize-1][b] == '+' || field[ySize-1][b] == 'm' || field[ySize-1][b] == '1' || field[ySize-1][b] == '2' || field[ySize-1][b] == '3' || field[ySize-1][b] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 6
+						if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 7
+						if(field[ySize-1][b+1] == '+' || field[ySize-1][b+1] == 'm' || field[ySize-1][b+1] == '1' || field[ySize-1][b+1] == '2' || field[ySize-1][b+1] == '3' || field[ySize-1][b+1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 8
+						if(field[a+1][b-1] == '+' || field[a+1][b-1] == 'm' || field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//Wraparound if a = ySize
+					}else if(wrap == 1 && a == ySize-1){
+						//check 1
+						if(field[0][b] == '+' || field[0][b] == 'm' || field[0][b] == '1' || field[0][b] == '2' || field[0][b] == '3' || field[0][b] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 2
+						if(field[0][b+1] == '+' || field[0][b+1] == 'm' || field[0][b+1] == '1' || field[0][b+1] == '2' || field[0][b+1] == '3' || field[0][b+1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 3
+						if(field[a-1][b-1] == '+' || field[a-1][b-1] == 'm' || field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 4
+						if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 5
+						if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 6
+						if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 7
+						if(field[a-1][b+1] == '+' || field[a-1][b+1] == 'm' || field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 8
+						if(field[0][b-1] == '+' || field[0][b-1] == 'm' || field[0][b-1] == '1' || field[0][b-1] == '2' || field[0][b-1] == '3' || field[0][b-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//Wraparound if b = 0
+					}else if(wrap == 1 && b == 0){
+						//check 1
+						if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 2
+						if(field[a+1][b+1] == '+' || field[a+1][b+1] == 'm' || field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 3
+						if(field[a-1][xSize-1] == '+' || field[a-1][xSize-1] == 'm' || field[a-1][xSize-1] == '1' || field[a-1][xSize-1] == '2' || field[a-1][xSize-1] == '3' || field[a-1][xSize-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 4
+						if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 5
+						if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 6
+						if(field[a][xSize-1] == '+' || field[a][xSize-1] == 'm' || field[a][xSize-1] == '1' || field[a][xSize-1] == '2' || field[a][xSize-1] == '3' || field[a][xSize-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 7
+						if(field[a-1][b+1] == '+' || field[a-1][b+1] == 'm' || field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 8
+						if(field[a+1][xSize-1] == '+' || field[a+1][xSize-1] == 'm' || field[a+1][xSize-1] == '1' || field[a+1][xSize-1] == '2' || field[a+1][xSize-1] == '3' || field[a+1][xSize-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//Wraparound if b = xSize
+					}else if(wrap == 1 && b == xSize-1){
+						//check 1
+						if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 2
+						if(field[a+1][0] == '+' || field[a+1][0] == 'm' || field[a+1][0] == '1' || field[a+1][0] == '2' || field[a+1][0] == '3' || field[a+1][0] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 3
+						if(field[a-1][b-1] == '+' || field[a-1][b-1] == 'm' || field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 4
+						if(field[a][0] == '+' || field[a][0] == 'm' || field[a][0] == '1' || field[a][0] == '2' || field[a][0] == '3' || field[a][0] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 5
+						if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 6
+						if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 7
+						if(field[a-1][0] == '+' || field[a-1][0] == 'm' || field[a-1][0] == '1' || field[a-1][0] == '2' || field[a-1][0] == '3' || field[a-1][0] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 8
+						if(field[a+1][b-1] == '+' || field[a+1][b-1] == 'm' || field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//No Wraparound
+					}else{
+						//check 1
+						if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 2
+						if(field[a+1][b+1] == '+' || field[a+1][b+1] == 'm' || field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 3
+						if(field[a-1][b-1] == '+' || field[a-1][b-1] == 'm' || field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 4
+						if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 5
+						if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 6
+						if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 7
+						if(field[a-1][b+1] == '+' || field[a-1][b+1] == 'm' || field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
+						//check 8
+						if(field[a+1][b-1] == '+' || field[a+1][b-1] == 'm' || field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4')
+						{
+							liveNeigh = liveNeigh + 1;
+						}
 					}
-					//check 2
-					if(field[a+1][b+1] == '+' || field[a+1][b+1] == 'm' || field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4')
-					{
-						liveNeigh = liveNeigh + 1;
-					}
-					//check 3
-					if(field[a-1][b-1] == '+' || field[a-1][b-1] == 'm' || field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4')
-					{
-						liveNeigh = liveNeigh + 1;
-					}
-					//check 4
-					if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
-					{
-						liveNeigh = liveNeigh + 1;
-					}
-					//check 5
-					if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
-					{
-						liveNeigh = liveNeigh + 1;
-					}
-					//check 6
-					if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
-					{
-						liveNeigh = liveNeigh + 1;
-					}
-					//check 7
-					if(field[a-1][b+1] == '+' || field[a-1][b+1] == 'm' || field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4')
-					{
-						liveNeigh = liveNeigh + 1;
-					}
-					//check 8
-					if(field[a+1][b-1] == '+' || field[a+1][b-1] == 'm' || field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4')
-					{
-						liveNeigh = liveNeigh + 1;
-					}
-
 					if(liveNeigh > 3 || liveNeigh <=1)
 					{
 
@@ -600,7 +1218,7 @@ void twoPlayer()
 printf("\nwe have 2 players\n");
 printf("\nhere are the rules: \n");
 printf("\nEach Players Live cell is their player number eg. Player1's live cells are marked 1\n");
-printf("\nEnter k to kill a sell and s to spawn one, and v is to view the board\n");
+printf("\nEnter k to kill a cell and s to spawn one, and v is to view the board\n");
 printf("\nYou get 3 moves\n");
 printf("\nYou cannot directly kill an opponents cell\n");
 printf("\nthe last player standing or the one with the most cells at the end of the game is the winner\n");
@@ -738,7 +1356,7 @@ printf("\nError that is not your Cell\n");
 if(pChoice == 's')
 {
 //start cut
-printf("\nEnter X-coord of cell to kill or b to go back:\n");
+printf("\nEnter X-coord of cell to spawn or b to go back:\n");
 scanf("%s", xcoBuff);
 
 if((char)xcoBuff[0] != 'b')
@@ -746,7 +1364,7 @@ if((char)xcoBuff[0] != 'b')
 xco = atoi(xcoBuff);
 printf("\n%d\n",xco);
 
-printf("\nEnter Y-coord of cell to kill or b to go back:");
+printf("\nEnter Y-coord of cell to spawn or b to go back:");
 scanf("%s",ycoBuff);
 
 
@@ -855,7 +1473,7 @@ printf("\nError that is not your Cell\n");
 if(pChoice == 's')
 {
 //start cut
-printf("\nEnter X-coord of cell to kill or b to go back:\n");
+printf("\nEnter X-coord of cell to spawn or b to go back:\n");
 scanf("%s", xcoBuff);
 
 if((char)xcoBuff[0] != 'b')
@@ -863,7 +1481,7 @@ if((char)xcoBuff[0] != 'b')
 xco = atoi(xcoBuff);
 printf("\n%d\n",xco);
 
-printf("\nEnter Y-coord of cell to kill or b to go back:");
+printf("\nEnter Y-coord of cell to spawn or b to go back:");
 scanf("%s",ycoBuff);
 
 
@@ -1151,7 +1769,7 @@ void threePlayer()
 printf("\nwe have 3 players\n");
 printf("\nhere are the rules: \n");
 printf("\nEach Players Live cell is their player number eg. Player1's live cells are marked 1\n");
-printf("\nEnter k to kill a sell and s to spawn one\n");
+printf("\nEnter k to kill a cell and s to spawn one\n");
 printf("\nYou get 3 moves\n");
 printf("\nYou cannot directly kill an opponents cell\n");
 printf("\nthe last player standing or the one with the most cells at the end of the game is the winner\n");
@@ -1868,7 +2486,7 @@ void fourPlayer()
 printf("\nwe have 4 players\n");
 printf("\nhere are the rules: \n");
 printf("\nEach Players Live cell is their player number eg. Player1's live cells are marked 1\n");
-printf("\nEnter k to kill a sell and s to spawn one\n");
+printf("\nEnter k to kill a cell and s to spawn one\n");
 printf("\nYou get 3 moves\n");
 printf("\nYou cannot directly kill an opponents cell\n");
 printf("\nthe last player standing or the one with the most cells at the end of the game is the winner\n");
