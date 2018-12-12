@@ -1,0 +1,3516 @@
+        -:    0:Source:Sample.c
+        -:    0:Graph:Sample.gcno
+        -:    0:Data:Sample.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    0:Source is newer than graph
+        -:    1:/*
+        -:    2:   ============================================================================
+        -:    3:Name        : Conway.c
+        -:    4:Author      :WalkersRangers 
+        -:    5:Version     :
+        -:    6:Copyright   : Your copyright notice
+        -:    7:Description : Hello World in C, Ansi-style
+        -:    8:============================================================================
+        -:    9:*/
+        -:   10:
+        -:   11:
+        -:   12:#include <stdio.h>
+        -:   13:#include <stdlib.h>
+        -:   14:#include <string.h>
+        -:   15:#include <unistd.h>
+        -:   16:
+        -:   17://variables for recording user's input on size of field, cell placement, etc.
+        -:   18://names should be self explanitonway's Game of Life\n\n");
+        -:   19:int xSize = 0;
+        -:   20:int ySize = 0;
+        -:   21:int numCycles = 1;
+        -:   22:int xStart = 0;
+        -:   23:int yStart = 0;
+        -:   24:int xStart2 = 0;
+        -:   25:int yStart2 = 0;
+        -:   26:int xStart3 = 0;
+        -:   27:int yStart3 = 0;
+        -:   28:char widthBuff[8];
+        -:   29:char heightBuff[8];
+        -:   30:char cycleBuff[8];
+        -:   31:char xStartBuff[8];
+        -:   32:char yStartBuff[8];
+        -:   33:char* path[10000];
+        -:   34:char coordList[1000];
+        -:   35:int xList[10000];
+        -:   36:int yList[10000];
+        -:   37:FILE* fp;
+        -:   38:char* wrappref[8];
+        -:   39:int defSize = 40;
+        -:   40:int infinite = 0;
+        -:   41:int wrap = 0;
+        -:   42:int liveNeigh = 0;
+        -:   43:char sleepBuf[8];
+        -:   44:int sleepTime = 0;
+        -:   45:char* fieldpref[8];
+        -:   46:int time = 0;
+        -:   47:int step = 0;
+        -:   48:char* stepbuff[8];
+        -:   49:char* stepper[8];
+        -:   50:int stepping = 0;
+        -:   51:char* playerBuff[20];
+        -:   52:int numPlayers = 1;
+        -:   53:char field[100][100];
+        -:   54:
+        -:   55://2d array for field use, starts at size of 2x2, changed later
+        -:   56://char field[2][2];
+        -:   57:
+        -:   58:
+        -:   59:struct Node  {
+        -:   60:	int xCoord;
+        -:   61:	int yCoord;
+        -:   62:	struct Node* next;
+        -:   63:	struct Node* prev;
+        -:   64:};
+        -:   65:
+        -:   66:struct Node* head; // global variable - pointer to head node.
+        -:   67:
+       11:   68:struct Node* GetNewNode(int x, int y) {
+       11:   69:	struct Node* newNode
+        -:   70:		= (struct Node*)malloc(sizeof(struct Node));
+       11:   71:	newNode->xCoord = x;
+       11:   72:	newNode->yCoord = y;
+       11:   73:	newNode->prev = NULL;
+       11:   74:	newNode->next = NULL;
+       11:   75:	return newNode;
+        -:   76:}
+        -:   77:
+        -:   78://Inserts a Node at head of doubly linked list
+       11:   79:void InsertAtHead(int x, int y) {
+       11:   80:	struct Node* newNode = GetNewNode(x,y);
+       11:   81:	if(head == NULL) {
+        1:   82:		head = newNode;
+        1:   83:		return;
+        -:   84:	}
+        -:   85:
+       10:   86:	head->prev = newNode;
+       10:   87:	newNode->next = head; 
+       10:   88:	head = newNode;
+        -:   89:}
+        -:   90:
+        -:   91://Inserts a Node at tail of Doubly linked list
+    #####:   92:void InsertAtTail(int x, int y) {
+    #####:   93:	struct Node* temp = head;
+    #####:   94:	struct Node* newNode = GetNewNode(x,y);
+    #####:   95:	if(head == NULL) {
+    #####:   96:		head = newNode;
+    #####:   97:		return;
+        -:   98:	}
+    #####:   99:	while(temp->next != NULL) temp = temp->next; // Go To last Node
+    #####:  100:	temp->next = newNode;
+    #####:  101:	newNode->prev = temp;
+        -:  102:}
+        -:  103:
+        -:  104://Prints all the elements in linked list in forward traversal order
+    #####:  105:void Print() {
+    #####:  106:	struct Node* temp = head;
+    #####:  107:	printf("Forward: ");
+    #####:  108:	while(temp != NULL) {
+    #####:  109:		printf("(%d,%d) ",temp->xCoord,temp->yCoord);
+    #####:  110:		temp = temp->next;
+        -:  111:	}
+    #####:  112:	printf("\n");
+    #####:  113:}
+        -:  114:
+        -:  115://Prints all the elements in linked list in backward traversal order
+    #####:  116:void ReversePrint() {
+    #####:  117:	struct Node* temp = head;
+    #####:  118:	if(temp == NULL) return; // empty list, exit
+        -:  119:	// Going to last Node
+    #####:  120:	while(temp->next != NULL) {
+    #####:  121:		temp = temp->next;
+        -:  122:	}
+        -:  123:	// Traversing backward using prev pointer
+    #####:  124:	printf("Reverse: ");
+    #####:  125:	while(temp != NULL) {
+    #####:  126:		printf("(%d,&d) ",temp->xCoord,temp->yCoord);
+    #####:  127:		temp = temp->prev;
+        -:  128:	}
+    #####:  129:	printf("\n");
+        -:  130:}
+        -:  131:
+        -:  132:
+        3:  133:void getInput(){
+        -:  134:	//rules and input section
+        3:  135:	printf("Welcome to Conway's Game of Life\n");
+        3:  136:	printf("Rules:\n");
+        3:  137:	printf("The game is played on a 2D orthogonal grid of square cells.\n");
+        3:  138:	printf("The cells are either alive or dead.\n");
+        3:  139:	printf("Every cell has eight neighbors adjacent horizontally, vertically, and diagonally\n");
+        3:  140:	printf("Every turn allows for the following events:\n");
+        3:  141:	printf("Any live cell with less than 2 live neighbors dies\n");
+        3:  142:	printf("Any live cell with 2 or 3 live neighbors lives\n");
+        3:  143:	printf("Any live cell wih 3 or more live neighbors dies\n");
+        3:  144:	printf("Any dead cell with exactly 3 live neighbors becomes alive\n");
+        3:  145:	printf("The rules are applied each turn until the game ends\n\n");
+        -:  146:
+        3:  147:	printf("Enter preferred field type: I = infinite, B = bounded\n");
+        3:  148:	scanf("%s", fieldpref);
+        -:  149:	
+        -:  150:	//if they go for infinite field set it to true
+        3:  151:	if(fieldpref[0] == 'I' || fieldpref[0] == 'i')
+        -:  152:	{
+    #####:  153:	infinite = 1;
+        -:  154:
+        -:  155:	}
+        -:  156:
+        -:  157:	//if we dont use infinite field do this	
+        3:  158:	if(infinite == 0)
+        -:  159:	{
+        3:  160:		printf("Enter Width: \n");
+        3:  161:		scanf("%s", widthBuff);
+        3:  162:		xSize = atoi(widthBuff);
+        3:  163:		printf("Enter Height: \n");
+        3:  164:		scanf("%s", heightBuff);
+        3:  165:		ySize = atoi(heightBuff);
+        -:  166:	}
+        -:  167:
+        -:  168:	//if we have an infinite field do this
+        3:  169:	if(infinite == 1)
+        -:  170:	{
+        -:  171:		//set grid dimensions to some that are very big but fit on screen
+    #####:  172:		xSize = defSize;
+    #####:  173:		ySize = defSize;
+        -:  174:
+        -:  175:	}
+        -:  176:
+        -:  177:
+        3:  178:	printf("Enter preferred field wrap style: T = toroidal, S = standard\n");
+        3:  179:	scanf("%s", wrappref);
+        -:  180:
+        3:  181:	if(wrappref[0] == 'T' || wrappref[0] == 't')
+        -:  182:	{
+        1:  183:		wrap = 1;
+        -:  184:	}
+        -:  185:
+        -:  186:	
+        -:  187:
+        -:  188:
+        3:  189:	printf("Enter # of Cycles / Turns \n");
+        3:  190:	scanf("%s", cycleBuff);
+        3:  191:	numCycles = atoi(cycleBuff);
+        3:  192:	printf("Width: %d Height: %d # of Cycles/Turns: %d\n", xSize, ySize, numCycles);
+        -:  193:	
+        3:  194:	printf("Enter # of Players supports 1,2,3,4: \n");
+        3:  195:	scanf("%s", playerBuff);
+        3:  196:	numPlayers = atoi(playerBuff);
+        -:  197:	
+        -:  198:
+        3:  199:	if(numPlayers == 1)
+        -:  200:	{
+        1:  201:	printf("Cycle by step or by time? (s for step t for time): \n");
+        1:  202:	scanf("%s", stepbuff);
+        -:  203:	
+        -:  204:
+        1:  205:	if(stepbuff[0] == 's' || stepbuff[0] == 'S')
+        -:  206:	{
+    #####:  207:	step = 1;
+        -:  208:	}
+        -:  209:
+        1:  210:	if(stepbuff[0] == 't' || stepbuff[0] == 'T')
+        -:  211:	{
+        1:  212:	time = 1;
+        -:  213:	}
+        -:  214:	
+        1:  215:	if(time == 1)
+        -:  216:	{
+        -:  217:	//Get cycle delay
+        1:  218:	printf("Enter cycle delay (in seconds): ");
+        1:  219:	scanf("%s", sleepBuf);
+        1:  220:	sleepTime = atoi(sleepBuf);
+        -:  221:  	}
+        -:  222:
+        1:  223:	if(step == 1)
+        -:  224:	{
+    #####:  225:	sleepTime = 0;
+        -:  226:	}
+        -:  227:
+        -:  228:	}
+        -:  229:
+        -:  230:
+        3:  231:}
+        -:  232:
+        -:  233:
+        -:  234:
+        1:  235:	void cycleWork(){
+        -:  236:	//start of cut chunk
+        -:  237:
+        -:  238:	//2d array for field use
+        -:  239:	//char field[xSize][ySize];
+        -:  240:	
+        -:  241:	//initField(xSize, ySize);
+        -:  242:
+       11:  243:	for(int a = 0; a < ySize; a++){
+      110:  244:		for(int b = 0; b < xSize; b++){
+        -:  245:
+      100:  246:			field[a][b] = '-';
+        -:  247:		}
+        -:  248:	}
+        1:  249:	int exit = 0;
+        -:  250:
+        -:  251:	
+        -:  252:	//allows the user to input the coordinates they want cells at
+       13:  253:	while(exit == 0)
+        -:  254:	{
+       12:  255:		printf("Enter Next X Coordinate or type exit to exit: ");
+       12:  256:		scanf("%s",xStartBuff);
+       12:  257:		xStart = atoi(xStartBuff);
+       12:  258:		if(strcmp(xStartBuff,"exit") == 0)
+        -:  259:		{
+        1:  260:			exit = 1;
+        1:  261:			break;
+        -:  262:		}
+       11:  263:		printf("Enter Next Y Coordinate or type exit to exit: ");
+       11:  264:		scanf("%s",yStartBuff);
+       11:  265:		yStart = atoi(yStartBuff);
+        -:  266:
+       11:  267:		if(strcmp(yStartBuff,"exit") == 0)
+        -:  268:		{
+    #####:  269:			exit = 1;
+    #####:  270:			break;
+        -:  271:		}
+        -:  272:
+       11:  273:		InsertAtHead(xStart,yStart);
+        -:  274:		//field[yStart][xStart] = '+';
+        -:  275:	}
+        1:  276:	struct Node* temp = head;
+        -:  277:
+       13:  278:	while(temp != NULL)
+        -:  279:	{
+        -:  280:		//insert into array version
+       11:  281:		field[((temp->yCoord)%ySize)][((temp->xCoord)%xSize)] = '+';
+        -:  282:		//printf("\ngoing\n");
+       11:  283:		temp = temp->next;
+        -:  284:
+        -:  285:	}	
+        -:  286:
+        -:  287:	//int liveNeigh = 0;
+        -:  288:	//end of first section
+        -:  289:	
+        -:  290:
+        -:  291://start super mega cut
+        4:  292:	for(int i = 0; i < numCycles; i++)
+        -:  293:	{
+        -:  294:		//exclude this
+        -:  295:		//print cycles
+        3:  296:		printf("\nCycle %d\n", i);
+        -:  297:
+        -:  298://need this
+       33:  299:		for(int a = 0; a < ySize; a++)
+        -:  300:		{
+        -:  301:
+      330:  302:			for(int b = 0; b < xSize; b++)
+        -:  303:			{
+        -:  304:
+        -:  305:				
+      300:  306:				if(field[a][b] == 'm')
+        -:  307:				{
+        7:  308:				field[a][b] = '-';
+        -:  309:				}
+        -:  310:
+      300:  311:				if(field[a][b] == 'p')
+        -:  312:				{
+       11:  313:				field[a][b] = '+';
+        -:  314:				}
+        -:  315:				
+        -:  316:
+      300:  317:				printf(" %c ",field[a][b]);
+        -:  318:				
+        -:  319:
+        -:  320:			}
+        -:  321:
+       30:  322:			printf("\n");
+        -:  323:		}
+        -:  324://end need
+        -:  325:
+        -:  326:		//printf("\nxStart:%d yStart:%d \n",xStart,yStart);
+        3:  327:		printf("\n\n");
+        -:  328:	
+        -:  329:		// amount of delay between cycles (in seconds)
+        3:  330:		if(sleepTime != 0) {
+        3:  331:			sleep(sleepTime);
+        -:  332:		}
+        -:  333:
+        -:  334:
+        -:  335:			//if we are stepping through cycles do this else use timer below
+        3:  336:			if(step == 1)
+        -:  337:			{
+    #####:  338:			stepping = 0;
+        -:  339:
+    #####:  340:			while(stepping == 0)
+        -:  341:			{
+    #####:  342:			printf("\n enter n for next cycle: ");
+    #####:  343:			scanf("%s",stepper);
+        -:  344:	
+    #####:  345:			if(stepper[0] == 'n' || stepper[0] == 'N')
+        -:  346:			{
+    #####:  347:			stepping = 1;
+        -:  348:			}
+        -:  349:
+        -:  350:			}
+        -:  351:
+        -:  352:			}
+        -:  353:
+        -:  354:
+        -:  355:		//do checking of cells in each cycle
+        -:  356:		//currently unimplemented need to get rid of -1 on for loop replace with checks on ifs for exceding boundary
+        -:  357:
+        -:  358:		//new
+        -:  359:		/*
+        -:  360:			for(int a = 0; a < ySize; a++)
+        -:  361:			{
+        -:  362:
+        -:  363:			for(int b = 0; b < xSize; b++)
+        -:  364:			{
+        -:  365:			
+        -:  366:				
+        -:  367:				if(field[a][b] == 'm')
+        -:  368:				{
+        -:  369:				field[a][b] = '-';
+        -:  370:				}
+        -:  371:
+        -:  372:				if(field[a][b] == 'p')
+        -:  373:				{
+        -:  374:				field[a][b] = '+';
+        -:  375:				}
+        -:  376:				
+        -:  377:
+        -:  378:			}
+        -:  379:
+        -:  380:			
+        -:  381:			}
+        -:  382:			//end new
+        -:  383:		*/	
+        -:  384:
+        -:  385://end exclude
+       33:  386:			for(int a = 0; a < ySize; a++)
+        -:  387:			{
+        -:  388:
+      330:  389:			for(int b = 0; b < xSize; b++)
+        -:  390:			{
+        -:  391:
+        -:  392:				//start
+      300:  393:				if(field[a][b] == '-')
+        -:  394:				{
+      260:  395:					liveNeigh = 0;
+        -:  396:					//Wraparound if a = 0 and b = 0
+      260:  397:					if(wrap == 1 && a == 0 && b == 0){
+    #####:  398:						if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
+        -:  399:						{
+    #####:  400:							liveNeigh = liveNeigh + 1;
+        -:  401:						}
+        -:  402:
+    #####:  403:						if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
+        -:  404:						{
+    #####:  405:							liveNeigh = liveNeigh + 1;
+        -:  406:						}
+        -:  407:	
+    #####:  408:						if(field[ySize-1][b] == '1' || field[ySize-1][b] == '2' || field[ySize-1][b] == '3' || field[ySize-1][b] == '4' || field[ySize-1][b] == '+')
+        -:  409:						{
+    #####:  410:							liveNeigh = liveNeigh + 1;
+        -:  411:						}
+        -:  412:
+    #####:  413:						if(field[a][xSize-1] == '1' || field[a][xSize-1] == '2' || field[a][xSize-1] == '3' || field[a][xSize-1] == '4' || field[a][xSize-1] == '+')
+        -:  414:						{
+    #####:  415:							liveNeigh = liveNeigh + 1;
+        -:  416:						}
+        -:  417:
+    #####:  418:						if(field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4' || field[a+1][b+1] == '+')
+        -:  419:						{
+    #####:  420:							liveNeigh = liveNeigh + 1;
+        -:  421:						}
+        -:  422:
+    #####:  423:						if(field[ySize-1][xSize-1] == '1' || field[ySize-1][xSize-1] == '2' || field[ySize-1][xSize-1] == '3' || field[ySize-1][xSize-1] == '4' || field[ySize-1][xSize-1] == '+')
+        -:  424:						{
+    #####:  425:							liveNeigh = liveNeigh + 1;
+        -:  426:						}
+        -:  427:
+    #####:  428:						if(field[ySize-1][b+1] == '1' || field[ySize-1][b+1] == '2' || field[ySize-1][b+1] == '3' || field[ySize-1][b+1] == '4' || field[ySize-1][b+1] == '+')
+        -:  429:						{
+    #####:  430:							liveNeigh = liveNeigh + 1;
+        -:  431:						}
+        -:  432:
+    #####:  433:						if(field[a+1][xSize-1] == '1' || field[a+1][xSize-1] == '2' || field[a+1][xSize-1] == '3' || field[a+1][xSize-1] == '4' || field[a+1][xSize-1] == '+')
+        -:  434:						{
+    #####:  435:							liveNeigh = liveNeigh + 1;
+        -:  436:						}
+        -:  437:						//Wraparound if a = 0 and b = xSize
+      260:  438:					}else if(wrap == 1 && a == 0 && b == xSize-1){
+        2:  439:						if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
+        -:  440:						{
+        1:  441:							liveNeigh = liveNeigh + 1;
+        -:  442:						}
+        -:  443:
+        2:  444:						if(field[a][0] == '1' || field[a][0] == '2' || field[a][0] == '3' || field[a][0] == '4' || field[a][0] == '+')
+        -:  445:						{
+        2:  446:							liveNeigh = liveNeigh + 1;
+        -:  447:						}
+        -:  448:	
+        2:  449:						if(field[ySize-1][b] == '1' || field[ySize-1][b] == '2' || field[ySize-1][b] == '3' || field[ySize-1][b] == '4' || field[ySize-1][b] == '+')
+        -:  450:						{
+    #####:  451:							liveNeigh = liveNeigh + 1;
+        -:  452:						}
+        -:  453:
+        2:  454:						if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
+        -:  455:						{
+    #####:  456:							liveNeigh = liveNeigh + 1;
+        -:  457:						}
+        -:  458:
+        2:  459:						if(field[a+1][0] == '1' || field[a+1][0] == '2' || field[a+1][0] == '3' || field[a+1][0] == '4' || field[a+1][0] == '+')
+        -:  460:						{
+        2:  461:							liveNeigh = liveNeigh + 1;
+        -:  462:						}
+        -:  463:
+        2:  464:						if(field[ySize-1][b-1] == '1' || field[ySize-1][b-1] == '2' || field[ySize-1][b-1] == '3' || field[ySize-1][b-1] == '4' || field[ySize-1][b-1] == '+')
+        -:  465:						{
+    #####:  466:							liveNeigh = liveNeigh + 1;
+        -:  467:						}
+        -:  468:
+        2:  469:						if(field[ySize-1][0] == '1' || field[ySize-1][0] == '2' || field[ySize-1][0] == '3' || field[ySize-1][0] == '4' || field[ySize-1][0] == '+')
+        -:  470:						{
+    #####:  471:							liveNeigh = liveNeigh + 1;
+        -:  472:						}
+        -:  473:
+        4:  474:						if(field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4' || field[a+1][b-1] == '+')
+        -:  475:						{
+    #####:  476:							liveNeigh = liveNeigh + 1;
+        -:  477:						}
+        -:  478:						//Wraparound if a = ySize and b = 0
+      258:  479:					}else if(wrap == 1 && a == ySize-1 && b == 0){
+        3:  480:						if(field[0][b] == '1' || field[0][b] == '2' || field[0][b] == '3' || field[0][b] == '4' || field[0][b] == '+')
+        -:  481:						{
+        3:  482:							liveNeigh = liveNeigh + 1;
+        -:  483:						}
+        -:  484:
+        3:  485:						if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
+        -:  486:						{
+    #####:  487:							liveNeigh = liveNeigh + 1;
+        -:  488:						}
+        -:  489:	
+        3:  490:						if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
+        -:  491:						{
+    #####:  492:							liveNeigh = liveNeigh + 1;
+        -:  493:						}
+        -:  494:
+        3:  495:						if(field[a][xSize-1] == '1' || field[a][xSize-1] == '2' || field[a][xSize-1] == '3' || field[a][xSize-1] == '4' || field[a][xSize-1] == '+')
+        -:  496:						{
+    #####:  497:							liveNeigh = liveNeigh + 1;
+        -:  498:						}
+        -:  499:
+        3:  500:						if(field[0][b+1] == '1' || field[0][b+1] == '2' || field[0][b+1] == '3' || field[0][b+1] == '4' || field[0][b+1] == '+')
+        -:  501:						{
+        2:  502:							liveNeigh = liveNeigh + 1;
+        -:  503:						}
+        -:  504:
+        3:  505:						if(field[a-1][xSize-1] == '1' || field[a-1][xSize-1] == '2' || field[a-1][xSize-1] == '3' || field[a-1][xSize-1] == '4' || field[a-1][xSize-1] == '+')
+        -:  506:						{
+    #####:  507:							liveNeigh = liveNeigh + 1;
+        -:  508:						}
+        -:  509:
+        3:  510:						if(field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4' || field[a-1][b+1] == '+')
+        -:  511:						{
+    #####:  512:							liveNeigh = liveNeigh + 1;
+        -:  513:						}
+        -:  514:
+        6:  515:						if(field[0][xSize-1] == '1' || field[0][xSize-1] == '2' || field[0][xSize-1] == '3' || field[0][xSize-1] == '4' || field[0][xSize-1] == '+')
+        -:  516:						{
+        1:  517:							liveNeigh = liveNeigh + 1;
+        -:  518:						}
+        -:  519:						//Wraparound if a = ySize and b = xSize
+      255:  520:					}else if(wrap == 1 && a == ySize-1 && b == xSize-1){
+        3:  521:						if(field[0][b] == '1' || field[0][b] == '2' || field[0][b] == '3' || field[0][b] == '4' || field[0][b] == '+')
+        -:  522:						{
+        1:  523:							liveNeigh = liveNeigh + 1;
+        -:  524:						}
+        -:  525:
+        3:  526:						if(field[a][0] == '1' || field[a][0] == '2' || field[a][0] == '3' || field[a][0] == '4' || field[a][0] == '+')
+        -:  527:						{
+    #####:  528:							liveNeigh = liveNeigh + 1;
+        -:  529:						}
+        -:  530:	
+        3:  531:						if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
+        -:  532:						{
+    #####:  533:							liveNeigh = liveNeigh + 1;
+        -:  534:						}
+        -:  535:
+        3:  536:						if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
+        -:  537:						{
+    #####:  538:							liveNeigh = liveNeigh + 1;
+        -:  539:						}
+        -:  540:
+        3:  541:						if(field[0][0] == '1' || field[0][0] == '2' || field[0][0] == '3' || field[0][0] == '4' || field[0][0] == '+')
+        -:  542:						{
+        3:  543:							liveNeigh = liveNeigh + 1;
+        -:  544:						}
+        -:  545:
+        3:  546:						if(field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4' || field[a-1][b-1] == '+')
+        -:  547:						{
+    #####:  548:							liveNeigh = liveNeigh + 1;
+        -:  549:						}
+        -:  550:
+        3:  551:						if(field[a-1][0] == '1' || field[a-1][0] == '2' || field[a-1][0] == '3' || field[a-1][0] == '4' || field[a-1][0] == '+')
+        -:  552:						{
+    #####:  553:							liveNeigh = liveNeigh + 1;
+        -:  554:						}
+        -:  555:
+        6:  556:						if(field[0][b-1] == '1' || field[0][b-1] == '2' || field[0][b-1] == '3' || field[0][b-1] == '4' || field[0][b-1] == '+')
+        -:  557:						{
+    #####:  558:							liveNeigh = liveNeigh + 1;
+        -:  559:						}
+        -:  560:						//Wraparound if a = 0
+      252:  561:					}else if(wrap == 1 && a == 0){
+       22:  562:						if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
+        -:  563:						{
+        1:  564:							liveNeigh = liveNeigh + 1;
+        -:  565:						}
+        -:  566:
+       22:  567:						if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
+        -:  568:						{
+        1:  569:							liveNeigh = liveNeigh + 1;
+        -:  570:						}
+        -:  571:	
+       22:  572:						if(field[ySize-1][b] == '1' || field[ySize-1][b] == '2' || field[ySize-1][b] == '3' || field[ySize-1][b] == '4' || field[ySize-1][b] == '+')
+        -:  573:						{
+    #####:  574:							liveNeigh = liveNeigh + 1;
+        -:  575:						}
+        -:  576:
+       22:  577:						if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
+        -:  578:						{
+        3:  579:							liveNeigh = liveNeigh + 1;
+        -:  580:						}
+        -:  581:
+       22:  582:						if(field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4' || field[a+1][b+1] == '+')
+        -:  583:						{
+        2:  584:							liveNeigh = liveNeigh + 1;
+        -:  585:						}
+        -:  586:
+       22:  587:						if(field[ySize-1][b-1] == '1' || field[ySize-1][b-1] == '2' || field[ySize-1][b-1] == '3' || field[ySize-1][b-1] == '4' || field[ySize-1][b-1] == '+')
+        -:  588:						{
+    #####:  589:							liveNeigh = liveNeigh + 1;
+        -:  590:						}
+        -:  591:
+       22:  592:						if(field[ySize-1][b+1] == '1' || field[ySize-1][b+1] == '2' || field[ySize-1][b+1] == '3' || field[ySize-1][b+1] == '4' || field[ySize-1][b+1] == '+')
+        -:  593:						{
+    #####:  594:							liveNeigh = liveNeigh + 1;
+        -:  595:						}
+        -:  596:
+       44:  597:						if(field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4' || field[a+1][b-1] == '+')
+        -:  598:						{
+        2:  599:							liveNeigh = liveNeigh + 1;
+        -:  600:						}
+        -:  601:						//Wraparound if a = ySize
+      230:  602:					}else if(wrap == 1 && a == ySize-1){
+       24:  603:						if(field[0][b] == '1' || field[0][b] == '2' || field[0][b] == '3' || field[0][b] == '4' || field[0][b] == '+')
+        -:  604:						{
+        2:  605:							liveNeigh = liveNeigh + 1;
+        -:  606:						}
+        -:  607:
+       24:  608:						if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
+        -:  609:						{
+    #####:  610:							liveNeigh = liveNeigh + 1;
+        -:  611:						}
+        -:  612:	
+       24:  613:						if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
+        -:  614:						{
+    #####:  615:							liveNeigh = liveNeigh + 1;
+        -:  616:						}
+        -:  617:
+       24:  618:						if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
+        -:  619:						{
+    #####:  620:							liveNeigh = liveNeigh + 1;
+        -:  621:						}
+        -:  622:
+       24:  623:						if(field[0][b+1] == '1' || field[0][b+1] == '2' || field[0][b+1] == '3' || field[0][b+1] == '4' || field[0][b+1] == '+')
+        -:  624:						{
+        1:  625:							liveNeigh = liveNeigh + 1;
+        -:  626:						}
+        -:  627:
+       24:  628:						if(field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4' || field[a-1][b-1] == '+')
+        -:  629:						{
+    #####:  630:							liveNeigh = liveNeigh + 1;
+        -:  631:						}
+        -:  632:
+       24:  633:						if(field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4' || field[a-1][b+1] == '+')
+        -:  634:						{
+    #####:  635:							liveNeigh = liveNeigh + 1;
+        -:  636:						}
+        -:  637:
+       48:  638:						if(field[0][b-1] == '1' || field[0][b-1] == '2' || field[0][b-1] == '3' || field[0][b-1] == '4' || field[0][b-1] == '+')
+        -:  639:						{
+        5:  640:							liveNeigh = liveNeigh + 1;
+        -:  641:						}
+        -:  642:						//Wraparound if b = 0
+      206:  643:					}else if(wrap == 1 && b == 0){
+       19:  644:						if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
+        -:  645:						{
+        1:  646:							liveNeigh = liveNeigh + 1;
+        -:  647:						}
+        -:  648:
+       19:  649:						if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
+        -:  650:						{
+    #####:  651:							liveNeigh = liveNeigh + 1;
+        -:  652:						}
+        -:  653:	
+       19:  654:						if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
+        -:  655:						{
+        4:  656:							liveNeigh = liveNeigh + 1;
+        -:  657:						}
+        -:  658:
+       19:  659:						if(field[a][xSize-1] == '1' || field[a][xSize-1] == '2' || field[a][xSize-1] == '3' || field[a][xSize-1] == '4' || field[a][xSize-1] == '+')
+        -:  660:						{
+        1:  661:							liveNeigh = liveNeigh + 1;
+        -:  662:						}
+        -:  663:
+       19:  664:						if(field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4' || field[a+1][b+1] == '+')
+        -:  665:						{
+        1:  666:							liveNeigh = liveNeigh + 1;
+        -:  667:						}
+        -:  668:
+       19:  669:						if(field[a-1][xSize-1] == '1' || field[a-1][xSize-1] == '2' || field[a-1][xSize-1] == '3' || field[a-1][xSize-1] == '4' || field[a-1][xSize-1] == '+')
+        -:  670:						{
+        2:  671:							liveNeigh = liveNeigh + 1;
+        -:  672:						}
+        -:  673:
+       19:  674:						if(field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4' || field[a-1][b+1] == '+')
+        -:  675:						{
+        2:  676:							liveNeigh = liveNeigh + 1;
+        -:  677:						}
+        -:  678:
+       38:  679:						if(field[a+1][xSize-1] == '1' || field[a+1][xSize-1] == '2' || field[a+1][xSize-1] == '3' || field[a+1][xSize-1] == '4' || field[a+1][xSize-1] == '+')
+        -:  680:						{
+        1:  681:							liveNeigh = liveNeigh + 1;
+        -:  682:						}
+        -:  683:						//wraparound if b = xSize
+      187:  684:					}else if(wrap == 1 && b == xSize-1){
+       21:  685:						if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
+        -:  686:						{
+    #####:  687:							liveNeigh = liveNeigh + 1;
+        -:  688:						}
+        -:  689:
+       21:  690:						if(field[a][0] == '1' || field[a][0] == '2' || field[a][0] == '3' || field[a][0] == '4' || field[a][0] == '+')
+        -:  691:						{
+        3:  692:							liveNeigh = liveNeigh + 1;
+        -:  693:						}
+        -:  694:	
+       21:  695:						if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
+        -:  696:						{
+        2:  697:							liveNeigh = liveNeigh + 1;
+        -:  698:						}
+        -:  699:
+       21:  700:						if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
+        -:  701:						{
+    #####:  702:							liveNeigh = liveNeigh + 1;
+        -:  703:						}
+        -:  704:
+       21:  705:						if(field[a+1][0] == '1' || field[a+1][0] == '2' || field[a+1][0] == '3' || field[a+1][0] == '4' || field[a+1][0] == '+')
+        -:  706:						{
+        1:  707:							liveNeigh = liveNeigh + 1;
+        -:  708:						}
+        -:  709:
+       21:  710:						if(field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4' || field[a-1][b-1] == '+')
+        -:  711:						{
+    #####:  712:							liveNeigh = liveNeigh + 1;
+        -:  713:						}
+        -:  714:
+       21:  715:						if(field[a-1][0] == '1' || field[a-1][0] == '2' || field[a-1][0] == '3' || field[a-1][0] == '4' || field[a-1][0] == '+')
+        -:  716:						{
+        6:  717:							liveNeigh = liveNeigh + 1;
+        -:  718:						}
+        -:  719:
+       42:  720:						if(field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4' || field[a+1][b-1] == '+')
+        -:  721:						{
+    #####:  722:							liveNeigh = liveNeigh + 1;
+        -:  723:						}
+        -:  724:						//No Wraparound
+        -:  725:					}else{
+      166:  726:						if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
+        -:  727:						{
+       18:  728:							liveNeigh = liveNeigh + 1;
+        -:  729:						}
+        -:  730:
+      166:  731:						if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
+        -:  732:						{
+       19:  733:							liveNeigh = liveNeigh + 1;
+        -:  734:						}
+        -:  735:	
+      166:  736:						if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
+        -:  737:						{
+       21:  738:							liveNeigh = liveNeigh + 1;
+        -:  739:						}
+        -:  740:
+      166:  741:						if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
+        -:  742:						{
+       21:  743:							liveNeigh = liveNeigh + 1;
+        -:  744:						}
+        -:  745:
+      166:  746:						if(field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4' || field[a+1][b+1] == '+')
+        -:  747:						{
+       10:  748:							liveNeigh = liveNeigh + 1;
+        -:  749:						}
+        -:  750:
+      166:  751:						if(field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4' || field[a-1][b-1] == '+')
+        -:  752:						{
+       20:  753:							liveNeigh = liveNeigh + 1;
+        -:  754:						}
+        -:  755:
+      166:  756:						if(field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4' || field[a-1][b+1] == '+')
+        -:  757:						{
+       27:  758:							liveNeigh = liveNeigh + 1;
+        -:  759:						}
+        -:  760:
+      166:  761:						if(field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4' || field[a+1][b-1] == '+')
+        -:  762:						{
+       26:  763:							liveNeigh = liveNeigh + 1;
+        -:  764:						}
+        -:  765:					}
+      260:  766:					if(liveNeigh == 3)
+        -:  767:					{
+        -:  768:						//did this for important reasons
+       19:  769:						field[a][b] = 'p';
+       19:  770:				printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+        -:  771:
+        -:  772:					}
+        -:  773:
+        -:  774:				}
+        -:  775:
+        -:  776:			//end add phase
+        -:  777:		}
+        -:  778:		}
+        -:  779:
+        -:  780:
+       33:  781:		for(int a = 0; a < ySize; a++)
+        -:  782:		{
+        -:  783:
+      330:  784:			for(int b = 0; b < xSize; b++)
+        -:  785:			{
+        -:  786:
+        -:  787:
+        -:  788:
+      300:  789:				if(field[a][b] == '1' || field[a][b] == '2' || field[a][b] == '3' || field[a][b] == '4' || field[a][b] == '+')
+        -:  790:				{
+       40:  791:					liveNeigh = 0;
+        -:  792:					//Wraparound if a = 0 and b = 0
+       40:  793:					if(wrap == 1 && a == 0 && b == 0){
+        -:  794:						//check 1
+        3:  795:						if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
+        -:  796:						{
+        2:  797:							liveNeigh = liveNeigh + 1;
+        -:  798:						}
+        -:  799:						//check 2
+        3:  800:						if(field[a+1][b+1] == '+' || field[a+1][b+1] == 'm' || field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4')
+        -:  801:						{
+        1:  802:							liveNeigh = liveNeigh + 1;
+        -:  803:						}
+        -:  804:						//check 3
+        3:  805:						if(field[ySize-1][xSize-1] == '+' || field[ySize-1][xSize-1] == 'm' || field[ySize-1][xSize-1] == '1' || field[ySize-1][xSize-1] == '2' || field[ySize-1][xSize-1] == '3' || field[ySize-1][xSize-1] == '4')
+        -:  806:						{
+    #####:  807:							liveNeigh = liveNeigh + 1;
+        -:  808:						}
+        -:  809:						//check 4
+        3:  810:						if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
+        -:  811:						{
+        2:  812:							liveNeigh = liveNeigh + 1;
+        -:  813:						}
+        -:  814:						//check 5
+        3:  815:						if(field[ySize-1][b] == '+' || field[ySize-1][b] == 'm' || field[ySize-1][b] == '1' || field[ySize-1][b] == '2' || field[ySize-1][b] == '3' || field[ySize-1][b] == '4')
+        -:  816:						{
+    #####:  817:							liveNeigh = liveNeigh + 1;
+        -:  818:						}
+        -:  819:						//check 6
+        3:  820:						if(field[a][xSize-1] == '+' || field[a][xSize-1] == 'm' || field[a][xSize-1] == '1' || field[a][xSize-1] == '2' || field[a][xSize-1] == '3' || field[a][xSize-1] == '4')
+        -:  821:						{
+        1:  822:							liveNeigh = liveNeigh + 1;
+        -:  823:						}
+        -:  824:						//check 7
+        3:  825:						if(field[ySize-1][b+1] == '+' || field[ySize-1][b+1] == 'm' || field[ySize-1][b+1] == '1' || field[ySize-1][b+1] == '2' || field[ySize-1][b+1] == '3' || field[ySize-1][b+1] == '4')
+        -:  826:						{
+    #####:  827:							liveNeigh = liveNeigh + 1;
+        -:  828:						}
+        -:  829:						//check 8
+        6:  830:						if(field[a+1][xSize-1] == '+' || field[a+1][xSize-1] == 'm' || field[a+1][xSize-1] == '1' || field[a+1][xSize-1] == '2' || field[a+1][xSize-1] == '3' || field[a+1][xSize-1] == '4')
+        -:  831:						{
+        2:  832:							liveNeigh = liveNeigh + 1;
+        -:  833:						}
+        -:  834:						//Wraparound if a = 0 and b = xSize
+       37:  835:					}else if(wrap == 1 && a == 0 && b == xSize-1){
+        -:  836:						//check 1
+        1:  837:						if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
+        -:  838:						{
+        1:  839:							liveNeigh = liveNeigh + 1;
+        -:  840:						}
+        -:  841:						//check 2
+        1:  842:						if(field[a+1][0] == '+' || field[a+1][0] == 'm' || field[a+1][0] == '1' || field[a+1][0] == '2' || field[a+1][0] == '3' || field[a+1][0] == '4')
+        -:  843:						{
+    #####:  844:							liveNeigh = liveNeigh + 1;
+        -:  845:						}
+        -:  846:						//check 3
+        1:  847:						if(field[ySize-1][b-1] == '+' || field[ySize-1][b-1] == 'm' || field[ySize-1][b-1] == '1' || field[ySize-1][b-1] == '2' || field[ySize-1][b-1] == '3' || field[ySize-1][b-1] == '4')
+        -:  848:						{
+    #####:  849:							liveNeigh = liveNeigh + 1;
+        -:  850:						}
+        -:  851:						//check 4
+        1:  852:						if(field[a][0] == '+' || field[a][0] == 'm' || field[a][0] == '1' || field[a][0] == '2' || field[a][0] == '3' || field[a][0] == '4')
+        -:  853:						{
+        1:  854:							liveNeigh = liveNeigh + 1;
+        -:  855:						}
+        -:  856:						//check 5
+        1:  857:						if(field[ySize-1][b] == '+' || field[ySize-1][b] == 'm' || field[ySize-1][b] == '1' || field[ySize-1][b] == '2' || field[ySize-1][b] == '3' || field[ySize-1][b] == '4')
+        -:  858:						{
+    #####:  859:							liveNeigh = liveNeigh + 1;
+        -:  860:						}
+        -:  861:						//check 6
+        1:  862:						if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
+        -:  863:						{
+    #####:  864:							liveNeigh = liveNeigh + 1;
+        -:  865:						}
+        -:  866:						//check 7
+        1:  867:						if(field[ySize-1][0] == '+' || field[ySize-1][0] == 'm' || field[ySize-1][0] == '1' || field[ySize-1][0] == '2' || field[ySize-1][0] == '3' || field[ySize-1][0] == '4')
+        -:  868:						{
+    #####:  869:							liveNeigh = liveNeigh + 1;
+        -:  870:						}
+        -:  871:						//check 8
+        2:  872:						if(field[a+1][b-1] == '+' || field[a+1][b-1] == 'm' || field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4')
+        -:  873:						{
+    #####:  874:							liveNeigh = liveNeigh + 1;
+        -:  875:						}
+        -:  876:						//Wraparound if a = ySize and b = 0
+       36:  877:					}else if(wrap == 1 && a == ySize-1 && b == 0){
+        -:  878:						//check 1
+    #####:  879:						if(field[0][b] == '+' || field[0][b] == 'm' || field[0][b] == '1' || field[0][b] == '2' || field[0][b] == '3' || field[0][b] == '4')
+        -:  880:						{
+    #####:  881:							liveNeigh = liveNeigh + 1;
+        -:  882:						}
+        -:  883:						//check 2
+    #####:  884:						if(field[0][b+1] == '+' || field[0][b+1] == 'm' || field[0][b+1] == '1' || field[0][b+1] == '2' || field[0][b+1] == '3' || field[0][b+1] == '4')
+        -:  885:						{
+    #####:  886:							liveNeigh = liveNeigh + 1;
+        -:  887:						}
+        -:  888:						//check 3
+    #####:  889:						if(field[a-1][xSize-1] == '+' || field[a-1][xSize-1] == 'm' || field[a-1][xSize-1] == '1' || field[a-1][xSize-1] == '2' || field[a-1][xSize-1] == '3' || field[a-1][xSize-1] == '4')
+        -:  890:						{
+    #####:  891:							liveNeigh = liveNeigh + 1;
+        -:  892:						}
+        -:  893:						//check 4
+    #####:  894:						if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
+        -:  895:						{
+    #####:  896:							liveNeigh = liveNeigh + 1;
+        -:  897:						}
+        -:  898:						//check 5
+    #####:  899:						if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
+        -:  900:						{
+    #####:  901:							liveNeigh = liveNeigh + 1;
+        -:  902:						}
+        -:  903:						//check 6
+    #####:  904:						if(field[a][xSize-1] == '+' || field[a][xSize-1] == 'm' || field[a][xSize-1] == '1' || field[a][xSize-1] == '2' || field[a][xSize-1] == '3' || field[a][xSize-1] == '4')
+        -:  905:						{
+    #####:  906:							liveNeigh = liveNeigh + 1;
+        -:  907:						}
+        -:  908:						//check 7
+    #####:  909:						if(field[a-1][b+1] == '+' || field[a-1][b+1] == 'm' || field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4')
+        -:  910:						{
+    #####:  911:							liveNeigh = liveNeigh + 1;
+        -:  912:						}
+        -:  913:						//check 8
+    #####:  914:						if(field[0][xSize-1] == '+' || field[0][xSize-1] == 'm' || field[0][xSize-1] == '1' || field[0][xSize-1] == '2' || field[0][xSize-1] == '3' || field[0][xSize-1] == '4')
+        -:  915:						{
+    #####:  916:							liveNeigh = liveNeigh + 1;
+        -:  917:						}
+        -:  918:						//Wraparound if a = ySize and b = xSize
+       36:  919:					}else if(wrap == 1 && a == ySize-1 && b == xSize-1){
+        -:  920:						//check 1
+    #####:  921:						if(field[0][b] == '+' || field[0][b] == 'm' || field[0][b] == '1' || field[0][b] == '2' || field[0][b] == '3' || field[0][b] == '4')
+        -:  922:						{
+    #####:  923:							liveNeigh = liveNeigh + 1;
+        -:  924:						}
+        -:  925:						//check 2
+    #####:  926:						if(field[0][0] == '+' || field[0][0] == 'm' || field[0][0] == '1' || field[0][0] == '2' || field[0][0] == '3' || field[0][0] == '4')
+        -:  927:						{
+    #####:  928:							liveNeigh = liveNeigh + 1;
+        -:  929:						}
+        -:  930:						//check 3
+    #####:  931:						if(field[a-1][b-1] == '+' || field[a-1][b-1] == 'm' || field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4')
+        -:  932:						{
+    #####:  933:							liveNeigh = liveNeigh + 1;
+        -:  934:						}
+        -:  935:						//check 4
+    #####:  936:						if(field[a][0] == '+' || field[a][0] == 'm' || field[a][0] == '1' || field[a][0] == '2' || field[a][0] == '3' || field[a][0] == '4')
+        -:  937:						{
+    #####:  938:							liveNeigh = liveNeigh + 1;
+        -:  939:						}
+        -:  940:						//check 5
+    #####:  941:						if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
+        -:  942:						{
+    #####:  943:							liveNeigh = liveNeigh + 1;
+        -:  944:						}
+        -:  945:						//check 6
+    #####:  946:						if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
+        -:  947:						{
+    #####:  948:							liveNeigh = liveNeigh + 1;
+        -:  949:						}
+        -:  950:						//check 7
+    #####:  951:						if(field[a-1][0] == '+' || field[a-1][0] == 'm' || field[a-1][0] == '1' || field[a-1][0] == '2' || field[a-1][0] == '3' || field[a-1][0] == '4')
+        -:  952:						{
+    #####:  953:							liveNeigh = liveNeigh + 1;
+        -:  954:						}
+        -:  955:						//check 8
+    #####:  956:						if(field[0][b-1] == '+' || field[0][b-1] == 'm' || field[0][b-1] == '1' || field[0][b-1] == '2' || field[0][b-1] == '3' || field[0][b-1] == '4')
+        -:  957:						{
+    #####:  958:							liveNeigh = liveNeigh + 1;
+        -:  959:						}
+        -:  960:						//Wraparound if a = 0
+       36:  961:					}else if(wrap == 1 && a == 0){
+        -:  962:						//check 1
+        2:  963:						if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
+        -:  964:						{
+    #####:  965:							liveNeigh = liveNeigh + 1;
+        -:  966:						}
+        -:  967:						//check 2
+        2:  968:						if(field[a+1][b+1] == '+' || field[a+1][b+1] == 'm' || field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4')
+        -:  969:						{
+    #####:  970:							liveNeigh = liveNeigh + 1;
+        -:  971:						}
+        -:  972:						//check 3
+        2:  973:						if(field[ySize-1][b-1] == '+' || field[ySize-1][b-1] == 'm' || field[ySize-1][b-1] == '1' || field[ySize-1][b-1] == '2' || field[ySize-1][b-1] == '3' || field[ySize-1][b-1] == '4')
+        -:  974:						{
+    #####:  975:							liveNeigh = liveNeigh + 1;
+        -:  976:						}
+        -:  977:						//check 4
+        2:  978:						if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
+        -:  979:						{
+    #####:  980:							liveNeigh = liveNeigh + 1;
+        -:  981:						}
+        -:  982:						//check 5
+        2:  983:						if(field[ySize-1][b] == '+' || field[ySize-1][b] == 'm' || field[ySize-1][b] == '1' || field[ySize-1][b] == '2' || field[ySize-1][b] == '3' || field[ySize-1][b] == '4')
+        -:  984:						{
+    #####:  985:							liveNeigh = liveNeigh + 1;
+        -:  986:						}
+        -:  987:						//check 6
+        2:  988:						if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
+        -:  989:						{
+        2:  990:							liveNeigh = liveNeigh + 1;
+        -:  991:						}
+        -:  992:						//check 7
+        2:  993:						if(field[ySize-1][b+1] == '+' || field[ySize-1][b+1] == 'm' || field[ySize-1][b+1] == '1' || field[ySize-1][b+1] == '2' || field[ySize-1][b+1] == '3' || field[ySize-1][b+1] == '4')
+        -:  994:						{
+    #####:  995:							liveNeigh = liveNeigh + 1;
+        -:  996:						}
+        -:  997:						//check 8
+        4:  998:						if(field[a+1][b-1] == '+' || field[a+1][b-1] == 'm' || field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4')
+        -:  999:						{
+        1: 1000:							liveNeigh = liveNeigh + 1;
+        -: 1001:						}
+        -: 1002:						//Wraparound if a = ySize
+       34: 1003:					}else if(wrap == 1 && a == ySize-1){
+        -: 1004:						//check 1
+    #####: 1005:						if(field[0][b] == '+' || field[0][b] == 'm' || field[0][b] == '1' || field[0][b] == '2' || field[0][b] == '3' || field[0][b] == '4')
+        -: 1006:						{
+    #####: 1007:							liveNeigh = liveNeigh + 1;
+        -: 1008:						}
+        -: 1009:						//check 2
+    #####: 1010:						if(field[0][b+1] == '+' || field[0][b+1] == 'm' || field[0][b+1] == '1' || field[0][b+1] == '2' || field[0][b+1] == '3' || field[0][b+1] == '4')
+        -: 1011:						{
+    #####: 1012:							liveNeigh = liveNeigh + 1;
+        -: 1013:						}
+        -: 1014:						//check 3
+    #####: 1015:						if(field[a-1][b-1] == '+' || field[a-1][b-1] == 'm' || field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4')
+        -: 1016:						{
+    #####: 1017:							liveNeigh = liveNeigh + 1;
+        -: 1018:						}
+        -: 1019:						//check 4
+    #####: 1020:						if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
+        -: 1021:						{
+    #####: 1022:							liveNeigh = liveNeigh + 1;
+        -: 1023:						}
+        -: 1024:						//check 5
+    #####: 1025:						if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
+        -: 1026:						{
+    #####: 1027:							liveNeigh = liveNeigh + 1;
+        -: 1028:						}
+        -: 1029:						//check 6
+    #####: 1030:						if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
+        -: 1031:						{
+    #####: 1032:							liveNeigh = liveNeigh + 1;
+        -: 1033:						}
+        -: 1034:						//check 7
+    #####: 1035:						if(field[a-1][b+1] == '+' || field[a-1][b+1] == 'm' || field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4')
+        -: 1036:						{
+    #####: 1037:							liveNeigh = liveNeigh + 1;
+        -: 1038:						}
+        -: 1039:						//check 8
+    #####: 1040:						if(field[0][b-1] == '+' || field[0][b-1] == 'm' || field[0][b-1] == '1' || field[0][b-1] == '2' || field[0][b-1] == '3' || field[0][b-1] == '4')
+        -: 1041:						{
+    #####: 1042:							liveNeigh = liveNeigh + 1;
+        -: 1043:						}
+        -: 1044:						//Wraparound if b = 0
+       34: 1045:					}else if(wrap == 1 && b == 0){
+        -: 1046:						//check 1
+        5: 1047:						if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
+        -: 1048:						{
+        2: 1049:							liveNeigh = liveNeigh + 1;
+        -: 1050:						}
+        -: 1051:						//check 2
+        5: 1052:						if(field[a+1][b+1] == '+' || field[a+1][b+1] == 'm' || field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4')
+        -: 1053:						{
+    #####: 1054:							liveNeigh = liveNeigh + 1;
+        -: 1055:						}
+        -: 1056:						//check 3
+        5: 1057:						if(field[a-1][xSize-1] == '+' || field[a-1][xSize-1] == 'm' || field[a-1][xSize-1] == '1' || field[a-1][xSize-1] == '2' || field[a-1][xSize-1] == '3' || field[a-1][xSize-1] == '4')
+        -: 1058:						{
+        2: 1059:							liveNeigh = liveNeigh + 1;
+        -: 1060:						}
+        -: 1061:						//check 4
+        5: 1062:						if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
+        -: 1063:						{
+        2: 1064:							liveNeigh = liveNeigh + 1;
+        -: 1065:						}
+        -: 1066:						//check 5
+        5: 1067:						if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
+        -: 1068:						{
+        4: 1069:							liveNeigh = liveNeigh + 1;
+        -: 1070:						}
+        -: 1071:						//check 6
+        5: 1072:						if(field[a][xSize-1] == '+' || field[a][xSize-1] == 'm' || field[a][xSize-1] == '1' || field[a][xSize-1] == '2' || field[a][xSize-1] == '3' || field[a][xSize-1] == '4')
+        -: 1073:						{
+        2: 1074:							liveNeigh = liveNeigh + 1;
+        -: 1075:						}
+        -: 1076:						//check 7
+        5: 1077:						if(field[a-1][b+1] == '+' || field[a-1][b+1] == 'm' || field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4')
+        -: 1078:						{
+        2: 1079:							liveNeigh = liveNeigh + 1;
+        -: 1080:						}
+        -: 1081:						//check 8
+       10: 1082:						if(field[a+1][xSize-1] == '+' || field[a+1][xSize-1] == 'm' || field[a+1][xSize-1] == '1' || field[a+1][xSize-1] == '2' || field[a+1][xSize-1] == '3' || field[a+1][xSize-1] == '4')
+        -: 1083:						{
+    #####: 1084:							liveNeigh = liveNeigh + 1;
+        -: 1085:						}
+        -: 1086:						//Wraparound if b = xSize
+       29: 1087:					}else if(wrap == 1 && b == xSize-1){
+        -: 1088:						//check 1
+        3: 1089:						if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
+        -: 1090:						{
+        1: 1091:							liveNeigh = liveNeigh + 1;
+        -: 1092:						}
+        -: 1093:						//check 2
+        3: 1094:						if(field[a+1][0] == '+' || field[a+1][0] == 'm' || field[a+1][0] == '1' || field[a+1][0] == '2' || field[a+1][0] == '3' || field[a+1][0] == '4')
+        -: 1095:						{
+        2: 1096:							liveNeigh = liveNeigh + 1;
+        -: 1097:						}
+        -: 1098:						//check 3
+        3: 1099:						if(field[a-1][b-1] == '+' || field[a-1][b-1] == 'm' || field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4')
+        -: 1100:						{
+    #####: 1101:							liveNeigh = liveNeigh + 1;
+        -: 1102:						}
+        -: 1103:						//check 4
+        3: 1104:						if(field[a][0] == '+' || field[a][0] == 'm' || field[a][0] == '1' || field[a][0] == '2' || field[a][0] == '3' || field[a][0] == '4')
+        -: 1105:						{
+        2: 1106:							liveNeigh = liveNeigh + 1;
+        -: 1107:						}
+        -: 1108:						//check 5
+        3: 1109:						if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
+        -: 1110:						{
+        2: 1111:							liveNeigh = liveNeigh + 1;
+        -: 1112:						}
+        -: 1113:						//check 6
+        3: 1114:						if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
+        -: 1115:						{
+    #####: 1116:							liveNeigh = liveNeigh + 1;
+        -: 1117:						}
+        -: 1118:						//check 7
+        3: 1119:						if(field[a-1][0] == '+' || field[a-1][0] == 'm' || field[a-1][0] == '1' || field[a-1][0] == '2' || field[a-1][0] == '3' || field[a-1][0] == '4')
+        -: 1120:						{
+        2: 1121:							liveNeigh = liveNeigh + 1;
+        -: 1122:						}
+        -: 1123:						//check 8
+        6: 1124:						if(field[a+1][b-1] == '+' || field[a+1][b-1] == 'm' || field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4')
+        -: 1125:						{
+    #####: 1126:							liveNeigh = liveNeigh + 1;
+        -: 1127:						}
+        -: 1128:						//No Wraparound
+        -: 1129:					}else{
+        -: 1130:						//check 1
+       26: 1131:						if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
+        -: 1132:						{
+        7: 1133:							liveNeigh = liveNeigh + 1;
+        -: 1134:						}
+        -: 1135:						//check 2
+       26: 1136:						if(field[a+1][b+1] == '+' || field[a+1][b+1] == 'm' || field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4')
+        -: 1137:						{
+       15: 1138:							liveNeigh = liveNeigh + 1;
+        -: 1139:						}
+        -: 1140:						//check 3
+       26: 1141:						if(field[a-1][b-1] == '+' || field[a-1][b-1] == 'm' || field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4')
+        -: 1142:						{
+       16: 1143:							liveNeigh = liveNeigh + 1;
+        -: 1144:						}
+        -: 1145:						//check 4
+       26: 1146:						if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
+        -: 1147:						{
+        8: 1148:							liveNeigh = liveNeigh + 1;
+        -: 1149:						}
+        -: 1150:						//check 5
+       26: 1151:						if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
+        -: 1152:						{
+        7: 1153:							liveNeigh = liveNeigh + 1;
+        -: 1154:						}
+        -: 1155:						//check 6
+       26: 1156:						if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
+        -: 1157:						{
+       10: 1158:							liveNeigh = liveNeigh + 1;
+        -: 1159:						}
+        -: 1160:						//check 7
+       26: 1161:						if(field[a-1][b+1] == '+' || field[a-1][b+1] == 'm' || field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4')
+        -: 1162:						{
+        1: 1163:							liveNeigh = liveNeigh + 1;
+        -: 1164:						}
+        -: 1165:						//check 8
+       26: 1166:						if(field[a+1][b-1] == '+' || field[a+1][b-1] == 'm' || field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4')
+        -: 1167:						{
+        2: 1168:							liveNeigh = liveNeigh + 1;
+        -: 1169:						}
+        -: 1170:					}
+       40: 1171:					if(liveNeigh > 3 || liveNeigh <=1)
+        -: 1172:					{
+        -: 1173:
+       11: 1174:						field[a][b] = 'm';
+        -: 1175:
+        -: 1176:					}
+       40: 1177:					printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+        -: 1178:
+        -: 1179:
+        -: 1180:				}//end of first loop
+        -: 1181:
+        -: 1182:
+        -: 1183:			}
+        -: 1184:/*
+        -: 1185:			for(int x = 0; x < ySize; x++)
+        -: 1186:			{
+        -: 1187:				for(int y = 0; y < xSize; y++)
+        -: 1188:				{
+        -: 1189:					if(field[x][y] == 'p')
+        -: 1190:					{
+        -: 1191:						field[x][y] = '+';
+        -: 1192:					}
+        -: 1193:
+        -: 1194:					if(field[x][y] == 'm')
+        -: 1195:					{
+        -: 1196:						field[x][y] = '-';
+        -: 1197:					}
+        -: 1198:
+        -: 1199:				}
+        -: 1200:			}
+        -: 1201:
+        -: 1202:			*/
+        -: 1203:		}
+        -: 1204:
+        -: 1205:
+        -: 1206:
+        -: 1207:	}
+        -: 1208:
+        -: 1209://end super mega cut
+        -: 1210:
+        -: 1211:
+        1: 1212:	return;
+        -: 1213:}
+        -: 1214:
+        -: 1215:
+        1: 1216:void twoPlayer()
+        -: 1217:{
+        1: 1218:printf("\nwe have 2 players\n");
+        1: 1219:printf("\nhere are the rules: \n");
+        1: 1220:printf("\nEach Players Live cell is their player number eg. Player1's live cells are marked 1\n");
+        1: 1221:printf("\nEnter k to kill a cell and s to spawn one, and v is to view the board\n");
+        1: 1222:printf("\nYou get 3 moves\n");
+        1: 1223:printf("\nYou cannot directly kill an opponents cell\n");
+        1: 1224:printf("\nthe last player standing or the one with the most cells at the end of the game is the winner\n");
+        1: 1225:printf("\nNote: All other standard rules apply\n");
+        1: 1226:printf("\nGood Luck\n");
+        -: 1227:
+        -: 1228://start 2p
+        1: 1229:int p1Turn = 0;
+        1: 1230:int p2Turn = 0;
+        1: 1231:int p1 = 1;
+        1: 1232:int p2 = 1;
+        1: 1233:int p1c = 0;
+        1: 1234:int p2c = 0;
+        -: 1235:char* choice[20];
+        1: 1236:char pChoice = 'v';
+        -: 1237:char xcoBuff[20];
+        -: 1238:char ycoBuff[20];
+        -: 1239:char xcoc;
+        -: 1240:char ycoc;
+        1: 1241:int xco = 0;
+        1: 1242:int yco = 0;
+        -: 1243:
+        -: 1244:
+        -: 1245:	//2d array for field use
+        -: 1246:	//char field[xSize][ySize];
+        -: 1247:	
+        -: 1248:	//initField(xSize, ySize);
+        -: 1249:
+       11: 1250:	for(int a = 0; a < ySize; a++){
+      110: 1251:		for(int b = 0; b < xSize; b++){
+        -: 1252:
+      100: 1253:			field[a][b] = '-';
+        -: 1254:		}
+        -: 1255:	}
+        -: 1256:
+        -: 1257:
+        4: 1258:while(numCycles > 0)
+        -: 1259:{
+        -: 1260:
+        -: 1261://start of turn
+        2: 1262:numCycles = numCycles - 1;
+        -: 1263:
+        2: 1264:p1Turn = 3;
+        2: 1265:p2Turn = 3;
+        -: 1266:
+        2: 1267:if(p1 == 0)
+        -: 1268:{
+    #####: 1269:printf("\nPlayer 1 is dead\n");
+    #####: 1270:printf("\nPlayer 2 wins\n");
+    #####: 1271:p1Turn = 0;
+    #####: 1272:break;
+        -: 1273:}
+        -: 1274:
+        -: 1275:
+        2: 1276:if(p2 == 0)
+        -: 1277:{
+    #####: 1278:printf("\nPlayer 2 is dead\n");
+    #####: 1279:p2Turn = 0;
+    #####: 1280:printf("\nPlayer 1 Wins\n");
+    #####: 1281:break;
+        -: 1282:}
+        -: 1283:
+        -: 1284:
+       13: 1285:while(p1Turn != 0)
+        -: 1286:{
+        9: 1287:printf("\nMoves Remaining: %d\n", p1Turn);
+        9: 1288:printf("\nPlayer1's Turn:");
+        9: 1289:scanf("%s", choice);
+        9: 1290:pChoice = choice[0];
+        -: 1291://display grid
+        -: 1292:
+        -: 1293://vcut
+        9: 1294:if(pChoice == 'v')
+        -: 1295:{
+        3: 1296:printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+        -: 1297:
+       33: 1298:for(int a = 0; a < ySize; a++)
+        -: 1299:{
+        -: 1300:
+      330: 1301:for(int b = 0; b < xSize; b++)
+        -: 1302:{
+        -: 1303:
+      300: 1304:printf("|%c|",field[a][b]);
+        -: 1305:
+        -: 1306:}
+       30: 1307:printf("\n");
+        -: 1308:}
+        -: 1309:
+        -: 1310:}
+        -: 1311://end vcut
+        -: 1312:
+        -: 1313://start kcut
+        -: 1314://kill one of your cells
+        9: 1315:if(pChoice == 'k')
+        -: 1316:{
+        -: 1317://start cut
+        1: 1318:printf("\nEnter X-coord of cell to kill or b to go back:\n");
+        1: 1319:scanf("%s", xcoBuff);
+        -: 1320:
+        1: 1321:if((char)xcoBuff[0] != 'b')
+        -: 1322:{
+        1: 1323:xco = atoi(xcoBuff);
+        1: 1324:printf("\n%d\n",xco);
+        -: 1325:
+        1: 1326:printf("\nEnter Y-coord of cell to kill or b to go back:");
+        1: 1327:scanf("%s",ycoBuff);
+        -: 1328:
+        -: 1329:
+        1: 1330:if((char)ycoBuff[0] != 'b')
+        -: 1331:{
+        1: 1332:yco = atoi(ycoBuff);
+        1: 1333:if((char)field[yco][xco] != '2')
+        -: 1334:{
+        1: 1335:printf("\nKilling cell at (%d,%d)\n",xco,yco);
+        1: 1336:field[yco][xco] = '-';
+        1: 1337:p1Turn = p1Turn - 1;
+        -: 1338:}
+        -: 1339://end cut
+        -: 1340:else
+        -: 1341:{
+    #####: 1342:printf("\nError that is not your Cell\n");
+        -: 1343:}
+        -: 1344:
+        -: 1345:}
+        -: 1346:
+        -: 1347:}
+        -: 1348:
+        -: 1349:
+        -: 1350:
+        -: 1351:}
+        -: 1352://end kcut
+        -: 1353:
+        -: 1354://start scut
+        -: 1355://spawn cell
+        9: 1356:if(pChoice == 's')
+        -: 1357:{
+        -: 1358://start cut
+        5: 1359:printf("\nEnter X-coord of cell to spawn or b to go back:\n");
+        5: 1360:scanf("%s", xcoBuff);
+        -: 1361:
+        5: 1362:if((char)xcoBuff[0] != 'b')
+        -: 1363:{
+        5: 1364:xco = atoi(xcoBuff);
+        5: 1365:printf("\n%d\n",xco);
+        -: 1366:
+        5: 1367:printf("\nEnter Y-coord of cell to spawn or b to go back:");
+        5: 1368:scanf("%s",ycoBuff);
+        -: 1369:
+        -: 1370:
+        5: 1371:if((char)ycoBuff[0] != 'b')
+        -: 1372:{
+        -: 1373:
+        -: 1374:
+        5: 1375:yco = atoi(ycoBuff);
+        -: 1376:
+        -: 1377:
+        5: 1378:if(field[xco][yco] != '-')
+        -: 1379:{
+    #####: 1380:printf("\nError there is already a live cell there\n");
+        -: 1381:}
+        -: 1382:
+        5: 1383:if(field[yco][xco] == '-')
+        -: 1384:{
+        5: 1385:printf("\nSpawning cell at (%d,%d)\n",xco,yco);
+        5: 1386:field[yco][xco] = '1';
+        5: 1387:p1Turn = p1Turn - 1;
+        -: 1388:}
+        -: 1389:
+        -: 1390:
+        -: 1391:
+        -: 1392:}
+        -: 1393:
+        -: 1394:}
+        -: 1395:
+        -: 1396:}
+        -: 1397://end s cut
+        -: 1398:}
+        -: 1399:
+        2: 1400:printf("\nPlayer2's Turn:");
+       12: 1401:while(p2Turn != 0)
+        -: 1402:{
+        8: 1403:printf("\nMoves Remaining: %d\n", p2Turn);
+        8: 1404:printf("\nPlayer2's Turn:");
+        8: 1405:scanf("%s", choice);
+        8: 1406:pChoice = choice[0];
+        -: 1407://display grid
+        -: 1408:
+        -: 1409:
+        -: 1410://vcut
+        8: 1411:if(pChoice == 'v')
+        -: 1412:{
+        2: 1413:printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+        -: 1414:
+       22: 1415:for(int a = 0; a < ySize; a++)
+        -: 1416:{
+        -: 1417:
+      220: 1418:for(int b = 0; b < xSize; b++)
+        -: 1419:{
+        -: 1420:
+      200: 1421:printf("|%c|",field[a][b]);
+        -: 1422:
+        -: 1423:}
+       20: 1424:printf("\n");
+        -: 1425:}
+        -: 1426:
+        -: 1427:}
+        -: 1428://end vcut
+        -: 1429:
+        -: 1430://start kcut
+        -: 1431://kill one of your cells
+        8: 1432:if(pChoice == 'k')
+        -: 1433:{
+        -: 1434://start cut
+        1: 1435:printf("\nEnter X-coord of cell to kill or b to go back:\n");
+        1: 1436:scanf("%s", xcoBuff);
+        -: 1437:
+        1: 1438:if((char)xcoBuff[0] != 'b')
+        -: 1439:{
+        1: 1440:xco = atoi(xcoBuff);
+        1: 1441:printf("\n%d\n",xco);
+        -: 1442:
+        1: 1443:printf("\nEnter Y-coord of cell to kill or b to go back:");
+        1: 1444:scanf("%s",ycoBuff);
+        -: 1445:
+        -: 1446:
+        1: 1447:if((char)ycoBuff[0] != 'b')
+        -: 1448:{
+        1: 1449:yco = atoi(ycoBuff);
+        1: 1450:if(field[yco][xco] != '1')
+        -: 1451:{
+        1: 1452:printf("\nKilling cell at (%d,%d)\n",xco,yco);
+        1: 1453:field[yco][xco] = '-';
+        1: 1454:p2Turn = p2Turn - 1;
+        -: 1455:}
+        -: 1456://end cut
+        -: 1457:else
+        -: 1458:{
+    #####: 1459:printf("\nError that is not your Cell\n");
+        -: 1460:}
+        -: 1461:
+        -: 1462:}
+        -: 1463:
+        -: 1464:}
+        -: 1465:
+        -: 1466:
+        -: 1467:
+        -: 1468:}
+        -: 1469://end kcut
+        -: 1470:
+        -: 1471://start scut
+        -: 1472://spawn cell
+        8: 1473:if(pChoice == 's')
+        -: 1474:{
+        -: 1475://start cut
+        5: 1476:printf("\nEnter X-coord of cell to spawn or b to go back:\n");
+        5: 1477:scanf("%s", xcoBuff);
+        -: 1478:
+        5: 1479:if((char)xcoBuff[0] != 'b')
+        -: 1480:{
+        5: 1481:xco = atoi(xcoBuff);
+        5: 1482:printf("\n%d\n",xco);
+        -: 1483:
+        5: 1484:printf("\nEnter Y-coord of cell to spawn or b to go back:");
+        5: 1485:scanf("%s",ycoBuff);
+        -: 1486:
+        -: 1487:
+        5: 1488:if((char)ycoBuff[0] != 'b')
+        -: 1489:{
+        -: 1490:
+        -: 1491:
+        5: 1492:yco = atoi(ycoBuff);
+        -: 1493:
+        -: 1494:
+        5: 1495:if(field[yco][xco] != '-')
+        -: 1496:{
+    #####: 1497:printf("\nError their is already a live cell there\n");
+        -: 1498:}
+        -: 1499:
+        5: 1500:if(field[yco][xco] == '-')
+        -: 1501:{
+        5: 1502:printf("\nSpawning cell at (%d,%d)\n",xco,yco);
+        5: 1503:field[yco][xco] = '2';
+        5: 1504:p2Turn = p2Turn - 1;
+        -: 1505:}
+        -: 1506:
+        -: 1507:
+        -: 1508:}
+        -: 1509:
+        -: 1510:}
+        -: 1511:
+        -: 1512:}
+        -: 1513://end s cut
+        -: 1514:
+        -: 1515:
+        -: 1516://p2Turn = p2Turn - 1;
+        -: 1517:}
+        -: 1518:
+        -: 1519://code to apply rules goes here
+        -: 1520:
+        -: 1521:
+        -: 1522:
+        -: 1523:
+        -: 1524://start super mega cut
+        3: 1525:	for(int i = 0; i < numCycles; i++)
+        -: 1526:	{
+       10: 1527:			for(int a = 0; a < ySize - 1; a++)
+        -: 1528:			{
+        -: 1529:
+       90: 1530:			for(int b = 0; b < xSize - 1; b++)
+        -: 1531:			{
+        -: 1532:
+        -: 1533:				//start
+       81: 1534:				if(field[a][b] == '-')
+        -: 1535:				{
+       77: 1536:					liveNeigh = 0;
+        -: 1537:
+       77: 1538:					if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
+        -: 1539:					{
+        4: 1540:						liveNeigh = liveNeigh + 1;
+        -: 1541:					}
+        -: 1542:
+       77: 1543:					if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
+        -: 1544:					{
+        4: 1545:						liveNeigh = liveNeigh + 1;
+        -: 1546:					}
+        -: 1547:
+       77: 1548:					if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
+        -: 1549:					{
+        4: 1550:						liveNeigh = liveNeigh + 1;
+        -: 1551:					}
+        -: 1552:
+       77: 1553:					if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
+        -: 1554:					{
+        4: 1555:						liveNeigh = liveNeigh + 1;
+        -: 1556:					}
+        -: 1557:
+       77: 1558:					if(field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4' || field[a+1][b+1] == '+')
+        -: 1559:					{
+        1: 1560:						liveNeigh = liveNeigh + 1;
+        -: 1561:					}
+        -: 1562:
+       77: 1563:					if(field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4' || field[a-1][b-1] == '+')
+        -: 1564:					{
+        1: 1565:						liveNeigh = liveNeigh + 1;
+        -: 1566:					}
+        -: 1567:
+       77: 1568:					if(field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4' || field[a-1][b+1] == '+')
+        -: 1569:					{
+        4: 1570:						liveNeigh = liveNeigh + 1;
+        -: 1571:					}
+        -: 1572:
+       77: 1573:					if(field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4' || field[a+1][b-1] == '+')
+        -: 1574:					{
+        4: 1575:						liveNeigh = liveNeigh + 1;
+        -: 1576:					}
+        -: 1577:
+       77: 1578:					if(liveNeigh == 3)
+        -: 1579:					{
+        -: 1580:						//did this for important reasons
+    #####: 1581:						field[a][b] = 'p';
+    #####: 1582:				printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+        -: 1583:
+        -: 1584:					}
+        -: 1585:
+        -: 1586:				}
+        -: 1587:
+        -: 1588:			//end add phase
+        -: 1589:		}
+        -: 1590:		}
+        -: 1591:
+        -: 1592:
+       10: 1593:		for(int a = 0; a < ySize - 1; a++)
+        -: 1594:		{
+        -: 1595:
+       90: 1596:			for(int b = 0; b < xSize - 1; b++)
+        -: 1597:			{
+        -: 1598:
+        -: 1599:
+        -: 1600:
+       81: 1601:				if(field[a][b] == '1' || field[a][b] == '2' || field[a][b] == '3' || field[a][b] == '4' || field[a][b] == '+')
+        -: 1602:				{
+        4: 1603:					liveNeigh = 0;
+        -: 1604:					//check 1
+        4: 1605:					if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
+        -: 1606:					{
+    #####: 1607:						liveNeigh = liveNeigh + 1;
+        -: 1608:					}
+        -: 1609:					//check 2
+        4: 1610:					if(field[a+1][b+1] == '+' || field[a+1][b+1] == 'm' || field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4')
+        -: 1611:					{
+        3: 1612:						liveNeigh = liveNeigh + 1;
+        -: 1613:					}
+        -: 1614:					//check 3
+        4: 1615:					if(field[a-1][b-1] == '+' || field[a-1][b-1] == 'm' || field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4')
+        -: 1616:					{
+        3: 1617:						liveNeigh = liveNeigh + 1;
+        -: 1618:					}
+        -: 1619:					//check 4
+        4: 1620:					if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
+        -: 1621:					{
+    #####: 1622:						liveNeigh = liveNeigh + 1;
+        -: 1623:					}
+        -: 1624:					//check 5
+        4: 1625:					if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
+        -: 1626:					{
+    #####: 1627:						liveNeigh = liveNeigh + 1;
+        -: 1628:					}
+        -: 1629:					//check 6
+        4: 1630:					if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
+        -: 1631:					{
+    #####: 1632:						liveNeigh = liveNeigh + 1;
+        -: 1633:					}
+        -: 1634:					//check 7
+        4: 1635:					if(field[a-1][b+1] == '+' || field[a-1][b+1] == 'm' || field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4')
+        -: 1636:					{
+    #####: 1637:						liveNeigh = liveNeigh + 1;
+        -: 1638:					}
+        -: 1639:					//check 8
+        4: 1640:					if(field[a+1][b-1] == '+' || field[a+1][b-1] == 'm' || field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4')
+        -: 1641:					{
+    #####: 1642:						liveNeigh = liveNeigh + 1;
+        -: 1643:					}
+        -: 1644:
+        4: 1645:					if(liveNeigh > 3 || liveNeigh <=1)
+        -: 1646:					{
+        -: 1647:
+        2: 1648:						field[a][b] = 'm';
+        -: 1649:
+        -: 1650:					}
+        4: 1651:					printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+        -: 1652:
+        -: 1653:
+        -: 1654:				}//end of first loop
+        -: 1655:
+        -: 1656:
+        -: 1657:			}
+        -: 1658:/*
+        -: 1659:			for(int x = 0; x < ySize; x++)
+        -: 1660:			{
+        -: 1661:				for(int y = 0; y < xSize; y++)
+        -: 1662:				{
+        -: 1663:					if(field[x][y] == 'p')
+        -: 1664:					{
+        -: 1665:						field[x][y] = '+';
+        -: 1666:					}
+        -: 1667:
+        -: 1668:					if(field[x][y] == 'm')
+        -: 1669:					{
+        -: 1670:						field[x][y] = '-';
+        -: 1671:					}
+        -: 1672:
+        -: 1673:				}
+        -: 1674:			}
+        -: 1675:
+        -: 1676:			*/
+        -: 1677:		}
+        -: 1678:
+        -: 1679:
+        -: 1680:
+        -: 1681:	}
+        -: 1682:
+        -: 1683://end super mega cut
+        -: 1684:
+        -: 1685:
+        -: 1686://need this
+       22: 1687:		for(int a = 0; a < ySize; a++)
+        -: 1688:		{
+        -: 1689:
+      220: 1690:			for(int b = 0; b < xSize; b++)
+        -: 1691:			{
+        -: 1692:
+        -: 1693:				
+      200: 1694:				if(field[a][b] == 'm')
+        -: 1695:				{
+        2: 1696:				field[a][b] = '-';
+        -: 1697:				}
+        -: 1698:
+      200: 1699:				if(field[a][b] == 'p')
+        -: 1700:				{
+    #####: 1701:				field[a][b] = '+';
+        -: 1702:				}
+        -: 1703:				
+        -: 1704:
+        -: 1705:				//printf("|%c|",field[a][b]);
+        -: 1706:
+        -: 1707:			}
+        -: 1708:
+        -: 1709:		}
+        -: 1710://end need
+        -: 1711://end actual cut
+        -: 1712:
+        -: 1713:
+        -: 1714:
+        -: 1715://code to check for deaths
+        2: 1716:p1c = 0;
+        2: 1717:p2c = 0;
+       22: 1718:	for(int a = 0; a < ySize; a++){
+      220: 1719:		for(int b = 0; b < xSize; b++){
+        -: 1720:
+      200: 1721:			if(field[a][b] == '1')
+        -: 1722:			{
+        5: 1723:			p1c = p1c + 1;
+        -: 1724:			}
+        -: 1725:
+      200: 1726:			if(field[a][b] == '2')
+        -: 1727:			{
+        5: 1728:			p2c = p2c + 1;
+        -: 1729:			}
+        -: 1730:			
+        -: 1731:			
+        -: 1732:		
+        -: 1733:		}
+        -: 1734:	}
+        -: 1735://printf("\np1c: %d\n",p1c);
+        -: 1736://printf("\np2c: %d\n",p2c);
+        -: 1737://check for losers
+        2: 1738:if(p1c == 0)
+        -: 1739:{
+        -: 1740://printf("\nin p1\n");
+    #####: 1741:p1 = 0;
+        -: 1742:}
+        -: 1743:
+        2: 1744:if(p2c == 0)
+        -: 1745:{
+        -: 1746://printf("\nin p2\n");
+    #####: 1747:p2 = 0;
+        -: 1748:}
+        -: 1749:
+        -: 1750:}
+        -: 1751://end 2p
+        -: 1752:
+        1: 1753:if(p1c >= p2c)
+        -: 1754:{
+        1: 1755:printf("\nGame Over Player 1 Wins\n");
+        -: 1756:}
+        1: 1757:if(p2c >= p1c)
+        -: 1758:{
+        1: 1759:printf("\nGame Over Player 2 Wins\n");
+        -: 1760:}
+        -: 1761:
+        -: 1762:
+        -: 1763:
+        1: 1764:}
+        -: 1765:
+    #####: 1766:void threePlayer()
+        -: 1767:{
+        -: 1768://start super cut
+    #####: 1769:printf("\nwe have 3 players\n");
+    #####: 1770:printf("\nhere are the rules: \n");
+    #####: 1771:printf("\nEach Players Live cell is their player number eg. Player1's live cells are marked 1\n");
+    #####: 1772:printf("\nEnter k to kill a cell and s to spawn one\n");
+    #####: 1773:printf("\nYou get 3 moves\n");
+    #####: 1774:printf("\nYou cannot directly kill an opponents cell\n");
+    #####: 1775:printf("\nthe last player standing or the one with the most cells at the end of the game is the winner\n");
+    #####: 1776:printf("\nNote: All other standard rules apply\n");
+        -: 1777:
+    #####: 1778:printf("\nGood Luck\n");
+        -: 1779:
+        -: 1780://start 2p
+    #####: 1781:int p1Turn = 0;
+    #####: 1782:int p2Turn = 0;
+    #####: 1783:int p3Turn = 0;
+    #####: 1784:int p1 = 1;
+    #####: 1785:int p2 = 1;
+    #####: 1786:int p3 = 1;
+    #####: 1787:int p1c = 0;
+    #####: 1788:int p2c = 0;
+    #####: 1789:int p3c = 0;
+        -: 1790:char* choice[20];
+    #####: 1791:char pChoice = 'v';
+        -: 1792:char xcoBuff[20];
+        -: 1793:char ycoBuff[20];
+        -: 1794:char xcoc;
+        -: 1795:char ycoc;
+    #####: 1796:int xco = 0;
+    #####: 1797:int yco = 0;
+        -: 1798:
+        -: 1799:	//2d array for field use
+        -: 1800:	//char field[xSize][ySize];
+        -: 1801:	
+        -: 1802:	//initField(xSize, ySize);
+        -: 1803:
+    #####: 1804:	for(int a = 0; a < ySize; a++){
+    #####: 1805:		for(int b = 0; b < xSize; b++){
+        -: 1806:
+    #####: 1807:			field[a][b] = '-';
+        -: 1808:		}
+        -: 1809:	}
+        -: 1810:
+        -: 1811:
+    #####: 1812:while(numCycles > 0)
+        -: 1813:{
+        -: 1814://start of turn
+    #####: 1815:numCycles = numCycles - 1;
+        -: 1816:
+    #####: 1817:p1Turn = 3;
+    #####: 1818:p2Turn = 3;
+    #####: 1819:p3Turn = 3;
+        -: 1820:
+    #####: 1821:if(p1 == 0)
+        -: 1822:{
+    #####: 1823:printf("\nPlayer 1 is dead\n");
+    #####: 1824:p1Turn = 0;
+        -: 1825:}
+        -: 1826:
+    #####: 1827:if(p2 == 0)
+        -: 1828:{
+    #####: 1829:printf("\nPlayer 2 is dead\n");
+    #####: 1830:p2Turn = 0;
+        -: 1831:}
+        -: 1832:
+        -: 1833:
+    #####: 1834:if(p3 == 0)
+        -: 1835:{
+    #####: 1836:printf("\nPlayer 3 is dead\n");
+    #####: 1837:p3Turn = 0;
+        -: 1838:}
+        -: 1839:
+        -: 1840:
+    #####: 1841:if(p3 == 0 && p2 == 0)
+        -: 1842:{
+    #####: 1843:printf("\nPlayer 1 Wins\n");
+    #####: 1844:p3Turn = 0;
+    #####: 1845:break;
+        -: 1846:}
+        -: 1847:
+    #####: 1848:if(p1 == 0 && p3 == 0)
+        -: 1849:{
+    #####: 1850:printf("\nPlayer 2 Wins\n");
+    #####: 1851:break;
+        -: 1852:}
+        -: 1853:
+        -: 1854:
+    #####: 1855:if(p1 == 0 && p2 == 0)
+        -: 1856:{
+    #####: 1857:printf("\nPlayer 3 Wins\n");
+    #####: 1858:break;
+        -: 1859:}
+        -: 1860:
+        -: 1861:
+        -: 1862:
+    #####: 1863:while(p1Turn != 0)
+        -: 1864:{
+    #####: 1865:printf("\nMoves Remaining: %d\n", p1Turn);
+    #####: 1866:printf("\nPlayer1's Turn:");
+    #####: 1867:scanf("%s", choice);
+    #####: 1868:pChoice = choice[0];
+        -: 1869://display grid
+        -: 1870:
+        -: 1871://vcut
+    #####: 1872:if(pChoice == 'v')
+        -: 1873:{
+    #####: 1874:printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+        -: 1875:
+    #####: 1876:for(int a = 0; a < ySize; a++)
+        -: 1877:{
+        -: 1878:
+    #####: 1879:for(int b = 0; b < xSize; b++)
+        -: 1880:{
+        -: 1881:
+    #####: 1882:printf("|%c|",field[a][b]);
+        -: 1883:
+        -: 1884:}
+    #####: 1885:printf("\n");
+        -: 1886:}
+        -: 1887:
+        -: 1888:}
+        -: 1889://end vcut
+        -: 1890:
+        -: 1891://start kcut
+        -: 1892://kill one of your cells
+    #####: 1893:if(pChoice == 'k')
+        -: 1894:{
+        -: 1895://start cut
+    #####: 1896:printf("\nEnter X-coord of cell to kill or b to go back:\n");
+    #####: 1897:scanf("%s", xcoBuff);
+        -: 1898:
+    #####: 1899:if((char)xcoBuff[0] != 'b')
+        -: 1900:{
+    #####: 1901:xco = atoi(xcoBuff);
+    #####: 1902:printf("\n%d\n",xco);
+        -: 1903:
+    #####: 1904:printf("\nEnter Y-coord of cell to kill or b to go back:");
+    #####: 1905:scanf("%s",ycoBuff);
+        -: 1906:
+        -: 1907:
+    #####: 1908:if((char)ycoBuff[0] != 'b')
+        -: 1909:{
+    #####: 1910:yco = atoi(ycoBuff);
+    #####: 1911:if((char)field[yco][xco] != '2' && (char)field[yco][xco] != '3')
+        -: 1912:{
+    #####: 1913:printf("\nKilling cell at (%d,%d)\n",xco,yco);
+    #####: 1914:field[yco][xco] = '-';
+    #####: 1915:p1Turn = p1Turn - 1;
+        -: 1916:}
+        -: 1917://end cut
+        -: 1918:else
+        -: 1919:{
+    #####: 1920:printf("\nError that is not your Cell\n");
+        -: 1921:}
+        -: 1922:
+        -: 1923:}
+        -: 1924:
+        -: 1925:}
+        -: 1926:
+        -: 1927:
+        -: 1928:
+        -: 1929:}
+        -: 1930://end kcut
+        -: 1931:
+        -: 1932://start scut
+        -: 1933://spawn cell
+    #####: 1934:if(pChoice == 's')
+        -: 1935:{
+        -: 1936://start cut
+    #####: 1937:printf("\nEnter X-coord of cell to kill or b to go back:\n");
+    #####: 1938:scanf("%s", xcoBuff);
+        -: 1939:
+    #####: 1940:if((char)xcoBuff[0] != 'b')
+        -: 1941:{
+    #####: 1942:xco = atoi(xcoBuff);
+    #####: 1943:printf("\n%d\n",xco);
+        -: 1944:
+    #####: 1945:printf("\nEnter Y-coord of cell to kill or b to go back:");
+    #####: 1946:scanf("%s",ycoBuff);
+        -: 1947:
+        -: 1948:
+    #####: 1949:if((char)ycoBuff[0] != 'b')
+        -: 1950:{
+        -: 1951:
+        -: 1952:
+    #####: 1953:yco = atoi(ycoBuff);
+        -: 1954:
+    #####: 1955:if(field[yco][xco] != '-')
+        -: 1956:{
+    #####: 1957:printf("\nError there is a live cell there already\n");
+        -: 1958:}
+        -: 1959:
+        -: 1960:
+    #####: 1961:if(field[yco][xco] == '-')
+        -: 1962:{
+    #####: 1963:printf("\nSpawning cell at (%d,%d)\n",xco,yco);
+    #####: 1964:field[yco][xco] = '1';
+    #####: 1965:p1Turn = p1Turn - 1;
+        -: 1966:}
+        -: 1967:
+        -: 1968:
+        -: 1969:
+        -: 1970:}
+        -: 1971:
+        -: 1972:}
+        -: 1973:
+        -: 1974:}
+        -: 1975://end s cut
+        -: 1976:}
+        -: 1977:
+    #####: 1978:printf("\nPlayer2's Turn:");
+    #####: 1979:while(p2Turn != 0)
+        -: 1980:{
+    #####: 1981:printf("\nMoves Remaining: %d\n", p2Turn);
+    #####: 1982:printf("\nPlayer2's Turn:");
+    #####: 1983:scanf("%s", choice);
+    #####: 1984:pChoice = choice[0];
+        -: 1985://display grid
+        -: 1986:
+        -: 1987:
+        -: 1988://vcut
+    #####: 1989:if(pChoice == 'v')
+        -: 1990:{
+    #####: 1991:printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+        -: 1992:
+    #####: 1993:for(int a = 0; a < ySize; a++)
+        -: 1994:{
+        -: 1995:
+    #####: 1996:for(int b = 0; b < xSize; b++)
+        -: 1997:{
+        -: 1998:
+    #####: 1999:printf("|%c|",field[a][b]);
+        -: 2000:
+        -: 2001:}
+    #####: 2002:printf("\n");
+        -: 2003:}
+        -: 2004:
+        -: 2005:}
+        -: 2006://end vcut
+        -: 2007:
+        -: 2008://start kcut
+        -: 2009://kill one of your cells
+    #####: 2010:if(pChoice == 'k')
+        -: 2011:{
+        -: 2012://start cut
+    #####: 2013:printf("\nEnter X-coord of cell to kill or b to go back:\n");
+    #####: 2014:scanf("%s", xcoBuff);
+        -: 2015:
+    #####: 2016:if((char)xcoBuff[0] != 'b')
+        -: 2017:{
+    #####: 2018:xco = atoi(xcoBuff);
+    #####: 2019:printf("\n%d\n",xco);
+        -: 2020:
+    #####: 2021:printf("\nEnter Y-coord of cell to kill or b to go back:");
+    #####: 2022:scanf("%s",ycoBuff);
+        -: 2023:
+        -: 2024:
+    #####: 2025:if((char)ycoBuff[0] != 'b')
+        -: 2026:{
+    #####: 2027:yco = atoi(ycoBuff);
+    #####: 2028:if(field[yco][xco] != '1' && field[yco][xco] != '3')
+        -: 2029:{
+    #####: 2030:printf("\nKilling cell at (%d,%d)\n",xco,yco);
+    #####: 2031:field[yco][xco] = '-';
+    #####: 2032:p2Turn = p2Turn - 1;
+        -: 2033:}
+        -: 2034://end cut
+        -: 2035:else
+        -: 2036:{
+    #####: 2037:printf("\nError that is not your Cell\n");
+        -: 2038:}
+        -: 2039:
+        -: 2040:}
+        -: 2041:
+        -: 2042:}
+        -: 2043:
+        -: 2044:
+        -: 2045:
+        -: 2046:}
+        -: 2047://end kcut
+        -: 2048:
+        -: 2049://start s cut
+        -: 2050://spawn cell
+    #####: 2051:if(pChoice == 's')
+        -: 2052:{
+        -: 2053://start cut
+    #####: 2054:printf("\nEnter X-coord of cell to kill or b to go back:\n");
+    #####: 2055:scanf("%s", xcoBuff);
+        -: 2056:
+    #####: 2057:if((char)xcoBuff[0] != 'b')
+        -: 2058:{
+    #####: 2059:xco = atoi(xcoBuff);
+    #####: 2060:printf("\n%d\n",xco);
+        -: 2061:
+    #####: 2062:printf("\nEnter Y-coord of cell to kill or b to go back:");
+    #####: 2063:scanf("%s",ycoBuff);
+        -: 2064:
+        -: 2065:
+    #####: 2066:if((char)ycoBuff[0] != 'b')
+        -: 2067:{
+        -: 2068:
+        -: 2069:
+    #####: 2070:yco = atoi(ycoBuff);
+        -: 2071:
+        -: 2072:
+        -: 2073:
+    #####: 2074:if(field[yco][xco] != '-')
+        -: 2075:{
+    #####: 2076:printf("\nError there is already a live cell there\n");
+        -: 2077:}
+        -: 2078:
+        -: 2079:
+    #####: 2080:if(field[yco][xco] == '-')
+        -: 2081:{
+    #####: 2082:printf("\nSpawning cell at (%d,%d)\n",xco,yco);
+    #####: 2083:field[yco][xco] = '2';
+    #####: 2084:p2Turn = p2Turn - 1;
+        -: 2085:}
+        -: 2086:
+        -: 2087:
+        -: 2088:
+        -: 2089:}
+        -: 2090:
+        -: 2091:}
+        -: 2092:
+        -: 2093:}
+        -: 2094://end s cut
+        -: 2095:
+        -: 2096:
+        -: 2097://p2Turn = p2Turn - 1;
+        -: 2098:}
+        -: 2099:
+    #####: 2100:while(p3Turn != 0)
+        -: 2101:{
+    #####: 2102:printf("\nMoves Remaining: %d\n", p3Turn);
+    #####: 2103:printf("\nPlayer3's Turn:");
+    #####: 2104:scanf("%s", choice);
+    #####: 2105:pChoice = choice[0];
+        -: 2106:
+        -: 2107://display grid
+        -: 2108://vcut
+    #####: 2109:if(pChoice == 'v')
+        -: 2110:{
+    #####: 2111:printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+        -: 2112:
+    #####: 2113:for(int a = 0; a < ySize; a++)
+        -: 2114:{
+        -: 2115:
+    #####: 2116:for(int b = 0; b < xSize; b++)
+        -: 2117:{
+        -: 2118:
+    #####: 2119:printf("|%c|",field[a][b]);
+        -: 2120:
+        -: 2121:}
+    #####: 2122:printf("\n");
+        -: 2123:}
+        -: 2124:
+        -: 2125:}
+        -: 2126://end vcut
+        -: 2127:
+        -: 2128://start kcut
+        -: 2129://kill one of your cells
+    #####: 2130:if(pChoice == 'k')
+        -: 2131:{
+        -: 2132://start cut
+    #####: 2133:printf("\nEnter X-coord of cell to kill or b to go back:\n");
+    #####: 2134:scanf("%s", xcoBuff);
+        -: 2135:
+    #####: 2136:if((char)xcoBuff[0] != 'b')
+        -: 2137:{
+    #####: 2138:xco = atoi(xcoBuff);
+    #####: 2139:printf("\n%d\n",xco);
+        -: 2140:
+    #####: 2141:printf("\nEnter Y-coord of cell to kill or b to go back:");
+    #####: 2142:scanf("%s",ycoBuff);
+        -: 2143:
+        -: 2144:
+    #####: 2145:if((char)ycoBuff[0] != 'b')
+        -: 2146:{
+    #####: 2147:yco = atoi(ycoBuff);
+        -: 2148:
+    #####: 2149:if((char)field[yco][xco] != '1' && (char)field[yco][xco] != '2')
+        -: 2150:{
+        -: 2151:
+        -: 2152://printf("\n%c\n",field[yco][xco]);
+    #####: 2153:printf("\nKilling cell at (%d,%d)\n",xco,yco);
+    #####: 2154:field[yco][xco] = '-';
+    #####: 2155:p3Turn = p3Turn - 1;
+        -: 2156:
+        -: 2157:}
+        -: 2158://end cut
+        -: 2159:else
+        -: 2160:{
+    #####: 2161:printf("\nError that is not your Cell\n");
+        -: 2162:}
+        -: 2163:
+        -: 2164:}
+        -: 2165:
+        -: 2166:}
+        -: 2167:
+        -: 2168:
+        -: 2169:
+        -: 2170:}
+        -: 2171://end kcut
+        -: 2172:
+        -: 2173://start s cut
+        -: 2174://spawn cell
+    #####: 2175:if(pChoice == 's')
+        -: 2176:{
+        -: 2177://start cut
+    #####: 2178:printf("\nEnter X-coord of cell to kill or b to go back:\n");
+    #####: 2179:scanf("%s", xcoBuff);
+        -: 2180:
+    #####: 2181:if((char)xcoBuff[0] != 'b')
+        -: 2182:{
+    #####: 2183:xco = atoi(xcoBuff);
+    #####: 2184:printf("\n%d\n",xco);
+        -: 2185:
+    #####: 2186:printf("\nEnter Y-coord of cell to kill or b to go back:");
+    #####: 2187:scanf("%s",ycoBuff);
+        -: 2188:
+        -: 2189:
+    #####: 2190:if((char)ycoBuff[0] != 'b')
+        -: 2191:{
+        -: 2192:
+        -: 2193:
+    #####: 2194:yco = atoi(ycoBuff);
+        -: 2195:
+    #####: 2196:if(field[yco][xco] != '-')
+        -: 2197:{
+    #####: 2198:printf("\nError there is already a live cell there\n");
+        -: 2199:}
+        -: 2200:
+    #####: 2201:if(field[yco][xco] == '-')
+        -: 2202:{
+    #####: 2203:printf("\nSpawning cell at (%d,%d)\n",xco,yco);
+    #####: 2204:field[yco][xco] = '3';
+    #####: 2205:p3Turn = p3Turn - 1;
+        -: 2206:}
+        -: 2207:
+        -: 2208:
+        -: 2209:
+        -: 2210:}
+        -: 2211:
+        -: 2212:}
+        -: 2213:
+        -: 2214:}
+        -: 2215://end s cut
+        -: 2216:
+        -: 2217:
+        -: 2218:}
+        -: 2219:
+        -: 2220:
+        -: 2221:
+        -: 2222://start super mega cut
+    #####: 2223:	for(int i = 0; i < numCycles; i++)
+        -: 2224:	{
+    #####: 2225:			for(int a = 0; a < ySize - 1; a++)
+        -: 2226:			{
+        -: 2227:
+    #####: 2228:			for(int b = 0; b < xSize - 1; b++)
+        -: 2229:			{
+        -: 2230:
+        -: 2231:				//start
+    #####: 2232:				if(field[a][b] == '-')
+        -: 2233:				{
+    #####: 2234:					liveNeigh = 0;
+        -: 2235:
+    #####: 2236:					if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
+        -: 2237:					{
+    #####: 2238:						liveNeigh = liveNeigh + 1;
+        -: 2239:					}
+        -: 2240:
+    #####: 2241:					if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
+        -: 2242:					{
+    #####: 2243:						liveNeigh = liveNeigh + 1;
+        -: 2244:					}
+        -: 2245:
+    #####: 2246:					if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
+        -: 2247:					{
+    #####: 2248:						liveNeigh = liveNeigh + 1;
+        -: 2249:					}
+        -: 2250:
+    #####: 2251:					if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
+        -: 2252:					{
+    #####: 2253:						liveNeigh = liveNeigh + 1;
+        -: 2254:					}
+        -: 2255:
+    #####: 2256:					if(field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4' || field[a+1][b+1] == '+')
+        -: 2257:					{
+    #####: 2258:						liveNeigh = liveNeigh + 1;
+        -: 2259:					}
+        -: 2260:
+    #####: 2261:					if(field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4' || field[a-1][b-1] == '+')
+        -: 2262:					{
+    #####: 2263:						liveNeigh = liveNeigh + 1;
+        -: 2264:					}
+        -: 2265:
+    #####: 2266:					if(field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4' || field[a-1][b+1] == '+')
+        -: 2267:					{
+    #####: 2268:						liveNeigh = liveNeigh + 1;
+        -: 2269:					}
+        -: 2270:
+    #####: 2271:					if(field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4' || field[a+1][b-1] == '+')
+        -: 2272:					{
+    #####: 2273:						liveNeigh = liveNeigh + 1;
+        -: 2274:					}
+        -: 2275:
+    #####: 2276:					if(liveNeigh == 3)
+        -: 2277:					{
+        -: 2278:						//did this for important reasons
+    #####: 2279:						field[a][b] = 'p';
+    #####: 2280:				//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+        -: 2281:
+        -: 2282:					}
+        -: 2283:
+        -: 2284:				}
+        -: 2285:
+        -: 2286:			//end add phase
+        -: 2287:		}
+        -: 2288:		}
+        -: 2289:
+        -: 2290:
+    #####: 2291:		for(int a = 0; a < ySize - 1; a++)
+        -: 2292:		{
+        -: 2293:
+    #####: 2294:			for(int b = 0; b < xSize - 1; b++)
+        -: 2295:			{
+        -: 2296:
+        -: 2297:
+        -: 2298:
+    #####: 2299:				if(field[a][b] == '1' || field[a][b] == '2' || field[a][b] == '3' || field[a][b] == '4' || field[a][b] == '+')
+        -: 2300:				{
+    #####: 2301:					liveNeigh = 0;
+        -: 2302:					//check 1
+    #####: 2303:					if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
+        -: 2304:					{
+    #####: 2305:						liveNeigh = liveNeigh + 1;
+        -: 2306:					}
+        -: 2307:					//check 2
+    #####: 2308:					if(field[a+1][b+1] == '+' || field[a+1][b+1] == 'm' || field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4')
+        -: 2309:					{
+    #####: 2310:						liveNeigh = liveNeigh + 1;
+        -: 2311:					}
+        -: 2312:					//check 3
+    #####: 2313:					if(field[a-1][b-1] == '+' || field[a-1][b-1] == 'm' || field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4')
+        -: 2314:					{
+    #####: 2315:						liveNeigh = liveNeigh + 1;
+        -: 2316:					}
+        -: 2317:					//check 4
+    #####: 2318:					if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
+        -: 2319:					{
+    #####: 2320:						liveNeigh = liveNeigh + 1;
+        -: 2321:					}
+        -: 2322:					//check 5
+    #####: 2323:					if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
+        -: 2324:					{
+    #####: 2325:						liveNeigh = liveNeigh + 1;
+        -: 2326:					}
+        -: 2327:					//check 6
+    #####: 2328:					if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
+        -: 2329:					{
+    #####: 2330:						liveNeigh = liveNeigh + 1;
+        -: 2331:					}
+        -: 2332:					//check 7
+    #####: 2333:					if(field[a-1][b+1] == '+' || field[a-1][b+1] == 'm' || field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4')
+        -: 2334:					{
+    #####: 2335:						liveNeigh = liveNeigh + 1;
+        -: 2336:					}
+        -: 2337:					//check 8
+    #####: 2338:					if(field[a+1][b-1] == '+' || field[a+1][b-1] == 'm' || field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4')
+        -: 2339:					{
+    #####: 2340:						liveNeigh = liveNeigh + 1;
+        -: 2341:					}
+        -: 2342:
+    #####: 2343:					if(liveNeigh > 3 || liveNeigh <=1)
+        -: 2344:					{
+        -: 2345:
+    #####: 2346:						field[a][b] = 'm';
+        -: 2347:
+        -: 2348:					}
+    #####: 2349:					//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+        -: 2350:
+        -: 2351:
+        -: 2352:				}//end of first loop
+        -: 2353:
+        -: 2354:
+        -: 2355:			}
+        -: 2356:/*
+        -: 2357:			for(int x = 0; x < ySize; x++)
+        -: 2358:			{
+        -: 2359:				for(int y = 0; y < xSize; y++)
+        -: 2360:				{
+        -: 2361:					if(field[x][y] == 'p')
+        -: 2362:					{
+        -: 2363:						field[x][y] = '+';
+        -: 2364:					}
+        -: 2365:
+        -: 2366:					if(field[x][y] == 'm')
+        -: 2367:					{
+        -: 2368:						field[x][y] = '-';
+        -: 2369:					}
+        -: 2370:
+        -: 2371:				}
+        -: 2372:			}
+        -: 2373:
+        -: 2374:			*/
+        -: 2375:		}
+        -: 2376:
+        -: 2377:
+        -: 2378:
+        -: 2379:	}
+        -: 2380:
+        -: 2381://end super mega cut
+        -: 2382:
+        -: 2383:
+        -: 2384://need this
+    #####: 2385:		for(int a = 0; a < ySize; a++)
+        -: 2386:		{
+        -: 2387:
+    #####: 2388:			for(int b = 0; b < xSize; b++)
+        -: 2389:			{
+        -: 2390:
+        -: 2391:				
+    #####: 2392:				if(field[a][b] == 'm')
+        -: 2393:				{
+    #####: 2394:				field[a][b] = '-';
+        -: 2395:				}
+        -: 2396:
+    #####: 2397:				if(field[a][b] == 'p')
+        -: 2398:				{
+    #####: 2399:				field[a][b] = '+';
+        -: 2400:				}
+        -: 2401:				
+        -: 2402:
+        -: 2403:				//printf("|%c|",field[a][b]);
+        -: 2404:
+        -: 2405:			}
+        -: 2406:
+        -: 2407:		}
+        -: 2408://end need
+        -: 2409://end actual cut
+        -: 2410:
+        -: 2411:
+        -: 2412:
+        -: 2413://code to check for deaths
+    #####: 2414:p1c = 0;
+    #####: 2415:p2c = 0;
+    #####: 2416:p3c = 0;
+    #####: 2417:	for(int a = 0; a < ySize; a++){
+    #####: 2418:		for(int b = 0; b < xSize; b++){
+        -: 2419:
+    #####: 2420:			if(field[a][b] == '1')
+        -: 2421:			{
+    #####: 2422:			p1c = p1c + 1;
+        -: 2423:			}
+        -: 2424:
+    #####: 2425:			if(field[a][b] == '2')
+        -: 2426:			{
+    #####: 2427:			p2c = p2c + 1;
+        -: 2428:			}
+        -: 2429:
+        -: 2430:
+    #####: 2431:			if(field[a][b] == '3')
+        -: 2432:			{
+    #####: 2433:			p3c = p3c + 1;
+        -: 2434:			}
+        -: 2435:			
+        -: 2436:			
+        -: 2437:		
+        -: 2438:		}
+        -: 2439:	}
+        -: 2440://printf("\np1c: %d\n",p1c);
+        -: 2441://printf("\np2c: %d\n",p2c);
+        -: 2442://check for losers
+    #####: 2443:if(p1c == 0)
+        -: 2444:{
+        -: 2445://printf("\nin p1\n");
+    #####: 2446:p1 = 0;
+        -: 2447:}
+        -: 2448:
+    #####: 2449:if(p2c == 0)
+        -: 2450:{
+        -: 2451://printf("\nin p2\n");
+    #####: 2452:p2 = 0;
+        -: 2453:}
+        -: 2454:
+        -: 2455:
+    #####: 2456:if(p3c == 0)
+        -: 2457:{
+        -: 2458://printf("\nin p2\n");
+    #####: 2459:p3 = 0;
+        -: 2460:}
+        -: 2461:
+        -: 2462:
+        -: 2463:}
+        -: 2464://end 2p
+        -: 2465:
+    #####: 2466:if(p1c >= p2c && p1c >= p3c)
+        -: 2467:{
+    #####: 2468:printf("\nGame Over Player 1 Wins\n");
+        -: 2469:}
+        -: 2470:
+    #####: 2471:if(p2c >= p1c && p2c >= p3c)
+        -: 2472:{
+    #####: 2473:printf("\nGame Over Player 2 Wins\n");
+        -: 2474:}
+        -: 2475:
+    #####: 2476:if(p3c >= p1c && p3c >= p2c)
+        -: 2477:{
+    #####: 2478:printf("\nGame Over Player 3 Wins\n");
+        -: 2479:}
+        -: 2480:
+    #####: 2481:}
+        -: 2482:
+        -: 2483:
+        1: 2484:void fourPlayer()
+        -: 2485:{
+        1: 2486:printf("\nwe have 4 players\n");
+        1: 2487:printf("\nhere are the rules: \n");
+        1: 2488:printf("\nEach Players Live cell is their player number eg. Player1's live cells are marked 1\n");
+        1: 2489:printf("\nEnter k to kill a cell and s to spawn one\n");
+        1: 2490:printf("\nYou get 3 moves\n");
+        1: 2491:printf("\nYou cannot directly kill an opponents cell\n");
+        1: 2492:printf("\nthe last player standing or the one with the most cells at the end of the game is the winner\n");
+        1: 2493:printf("\nNote: All other standard rules apply\n");
+        -: 2494:
+        -: 2495://start 2p
+        1: 2496:int p1Turn = 0;
+        1: 2497:int p2Turn = 0;
+        1: 2498:int p3Turn = 0;
+        1: 2499:int p4Turn = 0;
+        1: 2500:int p1 = 1;
+        1: 2501:int p2 = 1;
+        1: 2502:int p3 = 1;
+        1: 2503:int p4 = 1;
+        1: 2504:int p1c = 0;
+        1: 2505:int p2c = 0;
+        1: 2506:int p3c = 0;
+        1: 2507:int p4c = 0;
+        -: 2508:char* choice[20];
+        1: 2509:char pChoice = 'v';
+        -: 2510:char xcoBuff[20];
+        -: 2511:char ycoBuff[20];
+        -: 2512:char xcoc;
+        -: 2513:char ycoc;
+        1: 2514:int xco = 0;
+        1: 2515:int yco = 0;
+        -: 2516:
+        -: 2517:	//2d array for field use
+        -: 2518:	//char field[xSize][ySize];
+        -: 2519:	
+        -: 2520:	//initField(xSize, ySize);
+        -: 2521:
+       11: 2522:	for(int a = 0; a < ySize; a++){
+      110: 2523:		for(int b = 0; b < xSize; b++){
+        -: 2524:
+      100: 2525:			field[a][b] = '-';
+        -: 2526:		}
+        -: 2527:	}
+        -: 2528:
+        -: 2529:
+        4: 2530:while(numCycles > 0)
+        -: 2531:{
+        -: 2532://start of turn
+        2: 2533:numCycles = numCycles - 1;
+        -: 2534:
+        2: 2535:p1Turn = 3;
+        2: 2536:p2Turn = 3;
+        2: 2537:p3Turn = 3;
+        2: 2538:p4Turn = 3;
+        -: 2539:
+        -: 2540:
+        2: 2541:if(p1 == 0)
+        -: 2542:{
+    #####: 2543:printf("\nPlayer 1 is dead\n");
+    #####: 2544:p1Turn = 0;
+        -: 2545:}
+        -: 2546:
+        2: 2547:if(p2 == 0)
+        -: 2548:{
+    #####: 2549:printf("\nPlayer 2 is dead\n");
+    #####: 2550:p2Turn = 0;
+        -: 2551:}
+        -: 2552:
+        -: 2553:
+        2: 2554:if(p3 == 0)
+        -: 2555:{
+    #####: 2556:printf("\nPlayer 3 is dead\n");
+    #####: 2557:p3Turn = 0;
+        -: 2558:}
+        -: 2559:
+        -: 2560:
+        2: 2561:if(p4 == 0)
+        -: 2562:{
+    #####: 2563:printf("\nPlayer 4 is dead\n");
+    #####: 2564:p4Turn = 0;
+        -: 2565:}
+        -: 2566:
+        -: 2567:
+        2: 2568:if(p3 == 0 && p2 == 0 && p4 == 0)
+        -: 2569:{
+    #####: 2570:printf("\nPlayer 1 Wins\n");
+    #####: 2571:p3Turn = 0;
+    #####: 2572:break;
+        -: 2573:}
+        -: 2574:
+        2: 2575:if(p1 == 0 && p3 == 0 && p4 == 0)
+        -: 2576:{
+    #####: 2577:printf("\nPlayer 2 Wins\n");
+    #####: 2578:break;
+        -: 2579:}
+        -: 2580:
+        -: 2581:
+        2: 2582:if(p1 == 0 && p2 == 0 && p4 == 0)
+        -: 2583:{
+    #####: 2584:printf("\nPlayer 3 Wins\n");
+    #####: 2585:break;
+        -: 2586:}
+        -: 2587:
+        2: 2588:if(p1 == 0 && p2 == 0 && p3 == 0)
+        -: 2589:{
+    #####: 2590:printf("\nPlayer 4 Wins\n");
+    #####: 2591:break;
+        -: 2592:}
+        -: 2593:
+        -: 2594:
+       12: 2595:while(p1Turn != 0)
+        -: 2596:{
+        8: 2597:printf("\nMoves Remaining: %d\n", p1Turn);
+        8: 2598:printf("\nPlayer1's Turn:");
+        8: 2599:scanf("%s", choice);
+        8: 2600:pChoice = choice[0];
+        -: 2601://display grid
+        -: 2602:
+        -: 2603://vcut
+        8: 2604:if(pChoice == 'v')
+        -: 2605:{
+        2: 2606://printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+        -: 2607:
+       22: 2608:for(int a = 0; a < ySize; a++)
+        -: 2609:{
+        -: 2610:
+      220: 2611:for(int b = 0; b < xSize; b++)
+        -: 2612:{
+        -: 2613:
+      200: 2614:printf("|%c|",field[a][b]);
+        -: 2615:
+        -: 2616:}
+       20: 2617:printf("\n");
+        -: 2618:}
+        -: 2619:
+        -: 2620:}
+        -: 2621://end vcut
+        -: 2622:
+        -: 2623://start kcut
+        -: 2624://kill one of your cells
+        8: 2625:if(pChoice == 'k')
+        -: 2626:{
+        -: 2627://start cut
+        2: 2628:printf("\nEnter X-coord of cell to kill or b to go back:\n");
+        2: 2629:scanf("%s", xcoBuff);
+        -: 2630:
+        2: 2631:if((char)xcoBuff[0] != 'b')
+        -: 2632:{
+        2: 2633:xco = atoi(xcoBuff);
+        2: 2634:printf("\n%d\n",xco);
+        -: 2635:
+        2: 2636:printf("\nEnter Y-coord of cell to kill or b to go back:");
+        2: 2637:scanf("%s",ycoBuff);
+        -: 2638:
+        -: 2639:
+        2: 2640:if((char)ycoBuff[0] != 'b')
+        -: 2641:{
+        2: 2642:yco = atoi(ycoBuff);
+        -: 2643:
+        2: 2644:if((char)field[yco][xco] != '2' && (char)field[yco][xco] != '3' && field[yco][xco] != '4')
+        -: 2645:{
+        2: 2646:printf("\nKilling cell at (%d,%d)\n",xco,yco);
+        2: 2647:field[yco][xco] = '-';
+        2: 2648:p1Turn = p1Turn - 1;
+        -: 2649:}
+        -: 2650://end cut
+        -: 2651:else
+        -: 2652:{
+    #####: 2653:printf("\nError that is not your Cell\n");
+        -: 2654:}
+        -: 2655:
+        -: 2656:}
+        -: 2657:
+        -: 2658:}
+        -: 2659:
+        -: 2660:
+        -: 2661:
+        -: 2662:}
+        -: 2663://end kcut
+        -: 2664:
+        -: 2665://start scut
+        -: 2666://spawn cell
+        8: 2667:if(pChoice == 's')
+        -: 2668:{
+        -: 2669://start cut
+        4: 2670:printf("\nEnter X-coord of cell to kill or b to go back:\n");
+        4: 2671:scanf("%s", xcoBuff);
+        -: 2672:
+        4: 2673:if((char)xcoBuff[0] != 'b')
+        -: 2674:{
+        4: 2675:xco = atoi(xcoBuff);
+        4: 2676:printf("\n%d\n",xco);
+        -: 2677:
+        4: 2678:printf("\nEnter Y-coord of cell to kill or b to go back:");
+        4: 2679:scanf("%s",ycoBuff);
+        -: 2680:
+        -: 2681:
+        4: 2682:if((char)ycoBuff[0] != 'b')
+        -: 2683:{
+        4: 2684:yco = atoi(ycoBuff);
+        -: 2685:
+        -: 2686:
+        4: 2687:if(field[yco][xco] != '-')
+        -: 2688:{
+    #####: 2689:printf("Error there is already a live cell there");
+        -: 2690:}
+        -: 2691:
+        -: 2692:
+        4: 2693:if(field[yco][xco] == '-')
+        -: 2694:{
+        4: 2695:printf("\nSpawning cell at (%d,%d)\n",xco,yco);
+        4: 2696:field[yco][xco] = '1';
+        4: 2697:p1Turn = p1Turn - 1;
+        -: 2698:}
+        -: 2699:
+        -: 2700:
+        -: 2701:
+        -: 2702:}
+        -: 2703:
+        -: 2704:}
+        -: 2705:
+        -: 2706:}
+        -: 2707://end s cut
+        -: 2708:}
+        -: 2709:
+        -: 2710:
+        -: 2711://start p2 turn
+        2: 2712:printf("\nPlayer2's Turn:");
+       11: 2713:while(p2Turn != 0)
+        -: 2714:{
+        7: 2715:printf("\nMoves Remaining: %d\n", p2Turn);
+        7: 2716:printf("\nPlayer2's Turn:");
+        7: 2717:scanf("%s", choice);
+        7: 2718:pChoice = choice[0];
+        -: 2719://display grid
+        -: 2720:
+        -: 2721:
+        -: 2722://vcut
+        7: 2723:if(pChoice == 'v')
+        -: 2724:{
+        1: 2725://printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+        -: 2726:
+       11: 2727:for(int a = 0; a < ySize; a++)
+        -: 2728:{
+        -: 2729:
+      110: 2730:for(int b = 0; b < xSize; b++)
+        -: 2731:{
+        -: 2732:
+      100: 2733:printf("|%c|",field[a][b]);
+        -: 2734:
+        -: 2735:}
+       10: 2736:printf("\n");
+        -: 2737:}
+        -: 2738:
+        -: 2739:}
+        -: 2740://end vcut
+        -: 2741:
+        -: 2742://start kcut
+        -: 2743://kill one of your cells
+        7: 2744:if(pChoice == 'k')
+        -: 2745:{
+        -: 2746://start cut
+        4: 2747:printf("\nEnter X-coord of cell to kill or b to go back:\n");
+        4: 2748:scanf("%s", xcoBuff);
+        -: 2749:
+        4: 2750:if((char)xcoBuff[0] != 'b')
+        -: 2751:{
+        4: 2752:xco = atoi(xcoBuff);
+        4: 2753:printf("\n%d\n",xco);
+        -: 2754:
+        4: 2755:printf("\nEnter Y-coord of cell to kill or b to go back:");
+        4: 2756:scanf("%s",ycoBuff);
+        -: 2757:
+        -: 2758:
+        4: 2759:if((char)ycoBuff[0] != 'b')
+        -: 2760:{
+        4: 2761:yco = atoi(ycoBuff);
+        4: 2762:if(field[yco][xco] != '1' && field[yco][xco] != '3' && field[yco][xco] != '4')
+        -: 2763:{
+        4: 2764:printf("\nKilling cell at (%d,%d)\n",xco,yco);
+        4: 2765:field[yco][xco] = '-';
+        4: 2766:p2Turn = p2Turn - 1;
+        -: 2767:}
+        -: 2768://end cut
+        -: 2769:else
+        -: 2770:{
+    #####: 2771:printf("\nError that is not your Cell\n");
+        -: 2772:}
+        -: 2773:
+        -: 2774:}
+        -: 2775:
+        -: 2776:}
+        -: 2777:
+        -: 2778:
+        -: 2779:
+        -: 2780:}
+        -: 2781://end kcut
+        -: 2782:
+        -: 2783://start s cut
+        -: 2784://spawn cell
+        7: 2785:if(pChoice == 's')
+        -: 2786:{
+        -: 2787://start cut
+        2: 2788:printf("\nEnter X-coord of cell to kill or b to go back:\n");
+        2: 2789:scanf("%s", xcoBuff);
+        -: 2790:
+        2: 2791:if((char)xcoBuff[0] != 'b')
+        -: 2792:{
+        2: 2793:xco = atoi(xcoBuff);
+        2: 2794:printf("\n%d\n",xco);
+        -: 2795:
+        2: 2796:printf("\nEnter Y-coord of cell to kill or b to go back:");
+        2: 2797:scanf("%s",ycoBuff);
+        -: 2798:
+        -: 2799:
+        2: 2800:if((char)ycoBuff[0] != 'b')
+        -: 2801:{
+        -: 2802:
+        -: 2803:
+        2: 2804:yco = atoi(ycoBuff);
+        -: 2805:
+        -: 2806:
+        -: 2807:
+        2: 2808:if(field[yco][xco] != '-')
+        -: 2809:{
+    #####: 2810:printf("\nErrorr there is already a live cell there\n");
+        -: 2811:}
+        -: 2812:
+        2: 2813:if(field[yco][xco] == '-')
+        -: 2814:{
+        2: 2815:printf("\nSpawning cell at (%d,%d)\n",xco,yco);
+        2: 2816:field[yco][xco] = '2';
+        2: 2817:p2Turn = p2Turn - 1;
+        -: 2818:}
+        -: 2819:
+        -: 2820:
+        -: 2821:
+        -: 2822:}
+        -: 2823:
+        -: 2824:}
+        -: 2825:
+        -: 2826:}
+        -: 2827://end s cut
+        -: 2828:
+        -: 2829:
+        -: 2830://p2Turn = p2Turn - 1;
+        -: 2831:}
+        -: 2832://end p2
+        -: 2833:
+        -: 2834:
+       14: 2835:while(p3Turn != 0)
+        -: 2836:{
+       10: 2837:printf("\nMoves Remaining: %d\n", p3Turn);
+       10: 2838:printf("\nPlayer3's Turn:");
+       10: 2839:scanf("%s", choice);
+       10: 2840:pChoice = choice[0];
+        -: 2841:
+        -: 2842://display grid
+        -: 2843://vcut
+       10: 2844:if(pChoice == 'v')
+        -: 2845:{
+        4: 2846://printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+        -: 2847:
+       44: 2848:for(int a = 0; a < ySize; a++)
+        -: 2849:{
+        -: 2850:
+      440: 2851:for(int b = 0; b < xSize; b++)
+        -: 2852:{
+        -: 2853:
+      400: 2854:printf("|%c|",field[a][b]);
+        -: 2855:
+        -: 2856:}
+       40: 2857:printf("\n");
+        -: 2858:}
+        -: 2859:
+        -: 2860:}
+        -: 2861://end vcut
+        -: 2862:
+        -: 2863://start kcut
+        -: 2864://kill one of your cells
+       10: 2865:if(pChoice == 'k')
+        -: 2866:{
+        -: 2867://start cut
+        3: 2868:printf("\nEnter X-coord of cell to kill or b to go back:\n");
+        3: 2869:scanf("%s", xcoBuff);
+        -: 2870:
+        3: 2871:if((char)xcoBuff[0] != 'b')
+        -: 2872:{
+        3: 2873:xco = atoi(xcoBuff);
+        3: 2874:printf("\n%d\n",xco);
+        -: 2875:
+        3: 2876:printf("\nEnter Y-coord of cell to kill or b to go back:");
+        3: 2877:scanf("%s",ycoBuff);
+        -: 2878:
+        -: 2879:
+        3: 2880:if((char)ycoBuff[0] != 'b')
+        -: 2881:{
+        3: 2882:yco = atoi(ycoBuff);
+        -: 2883:
+        3: 2884:if((char)field[yco][xco] != '1' && (char)field[yco][xco] != '2' && field[yco][xco] != '4')
+        -: 2885:{
+        -: 2886:
+        -: 2887://printf("\n%c\n",field[yco][xco]);
+        3: 2888:printf("\nKilling cell at (%d,%d)\n",xco,yco);
+        3: 2889:field[yco][xco] = '-';
+        3: 2890:p3Turn = p3Turn - 1;
+        -: 2891:
+        -: 2892:}
+        -: 2893://end cut
+        -: 2894:else
+        -: 2895:{
+    #####: 2896:printf("\nError that is not your Cell\n");
+        -: 2897:}
+        -: 2898:
+        -: 2899:}
+        -: 2900:
+        -: 2901:}
+        -: 2902:
+        -: 2903:
+        -: 2904:
+        -: 2905:}
+        -: 2906://end kcut
+        -: 2907:
+        -: 2908://start s cut
+        -: 2909://spawn cell
+       10: 2910:if(pChoice == 's')
+        -: 2911:{
+        -: 2912://start cut
+        3: 2913:printf("\nEnter X-coord of cell to kill or b to go back:\n");
+        3: 2914:scanf("%s", xcoBuff);
+        -: 2915:
+        3: 2916:if((char)xcoBuff[0] != 'b')
+        -: 2917:{
+        3: 2918:xco = atoi(xcoBuff);
+        3: 2919:printf("\n%d\n",xco);
+        -: 2920:
+        3: 2921:printf("\nEnter Y-coord of cell to kill or b to go back:");
+        3: 2922:scanf("%s",ycoBuff);
+        -: 2923:
+        -: 2924:
+        3: 2925:if((char)ycoBuff[0] != 'b')
+        -: 2926:{
+        -: 2927:
+        -: 2928:
+        3: 2929:yco = atoi(ycoBuff);
+        3: 2930:printf("\nSpawning cell at (%d,%d)\n",xco,yco);
+        3: 2931:field[yco][xco] = '3';
+        3: 2932:p3Turn = p3Turn - 1;
+        -: 2933:
+        -: 2934:}
+        -: 2935:
+        -: 2936:}
+        -: 2937:
+        -: 2938:}
+        -: 2939://end s cut
+        -: 2940:
+        -: 2941:
+        -: 2942:}
+        2: 2943:printf("\nPlayer4's Turn:");
+       12: 2944:while(p4Turn != 0)
+        -: 2945:{
+        8: 2946:printf("\nMoves Remaining: %d\n", p4Turn);
+        8: 2947:printf("\nPlayer4's Turn:");
+        8: 2948:scanf("%s", choice);
+        8: 2949:pChoice = choice[0];
+        -: 2950://display grid
+        -: 2951:
+        -: 2952:
+        -: 2953://vcut
+        8: 2954:if(pChoice == 'v')
+        -: 2955:{
+        2: 2956://printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+        -: 2957:
+       22: 2958:for(int a = 0; a < ySize; a++)
+        -: 2959:{
+        -: 2960:
+      220: 2961:for(int b = 0; b < xSize; b++)
+        -: 2962:{
+        -: 2963:
+      200: 2964:printf("|%c|",field[a][b]);
+        -: 2965:
+        -: 2966:}
+       20: 2967:printf("\n");
+        -: 2968:}
+        -: 2969:
+        -: 2970:}
+        -: 2971://end vcut
+        -: 2972:
+        -: 2973://start kcut
+        -: 2974://kill one of your cells
+        8: 2975:if(pChoice == 'k')
+        -: 2976:{
+        -: 2977://start cut
+        4: 2978:printf("\nEnter X-coord of cell to kill or b to go back:\n");
+        4: 2979:scanf("%s", xcoBuff);
+        -: 2980:
+        4: 2981:if((char)xcoBuff[0] != 'b')
+        -: 2982:{
+        4: 2983:xco = atoi(xcoBuff);
+        4: 2984:printf("\n%d\n",xco);
+        -: 2985:
+        4: 2986:printf("\nEnter Y-coord of cell to kill or b to go back:");
+        4: 2987:scanf("%s",ycoBuff);
+        -: 2988:
+        -: 2989:
+        4: 2990:if((char)ycoBuff[0] != 'b')
+        -: 2991:{
+        4: 2992:yco = atoi(ycoBuff);
+        -: 2993:
+        4: 2994:if(field[yco][xco] != '1' && field[yco][xco] != '3' && field[yco][xco] != '2')
+        -: 2995:{
+        4: 2996:printf("\nKilling cell at (%d,%d)\n",xco,yco);
+        4: 2997:field[yco][xco] = '-';
+        4: 2998:p4Turn = p4Turn - 1;
+        -: 2999:}
+        -: 3000://end cut
+        -: 3001:else
+        -: 3002:{
+    #####: 3003:printf("\nError that is not your Cell\n");
+        -: 3004:}
+        -: 3005:
+        -: 3006:}
+        -: 3007:
+        -: 3008:}
+        -: 3009:
+        -: 3010:
+        -: 3011:
+        -: 3012:}
+        -: 3013://end kcut
+        -: 3014:
+        -: 3015://start s cut
+        -: 3016://spawn cell
+        8: 3017:if(pChoice == 's')
+        -: 3018:{
+        -: 3019://start cut
+        2: 3020:printf("\nEnter X-coord of cell to kill or b to go back:\n");
+        2: 3021:scanf("%s", xcoBuff);
+        -: 3022:
+        2: 3023:if((char)xcoBuff[0] != 'b')
+        -: 3024:{
+        2: 3025:xco = atoi(xcoBuff);
+        2: 3026:printf("\n%d\n",xco);
+        -: 3027:
+        2: 3028:printf("\nEnter Y-coord of cell to kill or b to go back:");
+        2: 3029:scanf("%s",ycoBuff);
+        -: 3030:
+        -: 3031:
+        2: 3032:if((char)ycoBuff[0] != 'b')
+        -: 3033:{
+        -: 3034:
+        -: 3035:
+        2: 3036:yco = atoi(ycoBuff);
+        -: 3037:
+        -: 3038:
+        2: 3039:if(field[yco][xco] != '-')
+        -: 3040:{
+    #####: 3041:printf("\nError there is already a live cell there\n");
+        -: 3042:}
+        -: 3043:
+        2: 3044:if(field[yco][xco] == '-')
+        -: 3045:{
+        2: 3046:printf("\nSpawning cell at (%d,%d)\n",xco,yco);
+        2: 3047:field[yco][xco] = '4';
+        2: 3048:p4Turn = p4Turn - 1;
+        -: 3049:}
+        -: 3050:
+        -: 3051:
+        -: 3052:
+        -: 3053:}
+        -: 3054:
+        -: 3055:}
+        -: 3056:
+        -: 3057:}
+        -: 3058://end s cut
+        -: 3059:
+        -: 3060:
+        -: 3061://p4Turn = p4Turn - 1;
+        -: 3062:}
+        -: 3063://end p2
+        -: 3064:
+        -: 3065:
+        -: 3066:
+        -: 3067://start super mega cut
+        3: 3068:	for(int i = 0; i < numCycles; i++)
+        -: 3069:	{
+       10: 3070:			for(int a = 0; a < ySize - 1; a++)
+        -: 3071:			{
+        -: 3072:
+       90: 3073:			for(int b = 0; b < xSize - 1; b++)
+        -: 3074:			{
+        -: 3075:
+        -: 3076:				//start
+       81: 3077:				if(field[a][b] == '-')
+        -: 3078:				{
+       73: 3079:					liveNeigh = 0;
+        -: 3080:
+       73: 3081:					if(field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4' || field[a+1][b] == '+')
+        -: 3082:					{
+        7: 3083:						liveNeigh = liveNeigh + 1;
+        -: 3084:					}
+        -: 3085:
+       73: 3086:					if(field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4' || field[a][b+1] == '+')
+        -: 3087:					{
+        7: 3088:						liveNeigh = liveNeigh + 1;
+        -: 3089:					}
+        -: 3090:
+       73: 3091:					if(field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4' || field[a-1][b] == '+')
+        -: 3092:					{
+        6: 3093:						liveNeigh = liveNeigh + 1;
+        -: 3094:					}
+        -: 3095:
+       73: 3096:					if(field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4' || field[a][b-1] == '+')
+        -: 3097:					{
+        6: 3098:						liveNeigh = liveNeigh + 1;
+        -: 3099:					}
+        -: 3100:
+       73: 3101:					if(field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4' || field[a+1][b+1] == '+')
+        -: 3102:					{
+        3: 3103:						liveNeigh = liveNeigh + 1;
+        -: 3104:					}
+        -: 3105:
+       73: 3106:					if(field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4' || field[a-1][b-1] == '+')
+        -: 3107:					{
+        2: 3108:						liveNeigh = liveNeigh + 1;
+        -: 3109:					}
+        -: 3110:
+       73: 3111:					if(field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4' || field[a-1][b+1] == '+')
+        -: 3112:					{
+        7: 3113:						liveNeigh = liveNeigh + 1;
+        -: 3114:					}
+        -: 3115:
+       73: 3116:					if(field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4' || field[a+1][b-1] == '+')
+        -: 3117:					{
+        7: 3118:						liveNeigh = liveNeigh + 1;
+        -: 3119:					}
+        -: 3120:
+       73: 3121:					if(liveNeigh == 3)
+        -: 3122:					{
+        -: 3123:						//did this for important reasons
+        2: 3124:						field[a][b] = 'p';
+        2: 3125:				//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+        -: 3126:
+        -: 3127:					}
+        -: 3128:
+        -: 3129:				}
+        -: 3130:
+        -: 3131:			//end add phase
+        -: 3132:		}
+        -: 3133:		}
+        -: 3134:
+        -: 3135:
+       10: 3136:		for(int a = 0; a < ySize - 1; a++)
+        -: 3137:		{
+        -: 3138:
+       90: 3139:			for(int b = 0; b < xSize - 1; b++)
+        -: 3140:			{
+        -: 3141:
+        -: 3142:
+        -: 3143:
+       81: 3144:				if(field[a][b] == '1' || field[a][b] == '2' || field[a][b] == '3' || field[a][b] == '4' || field[a][b] == '+')
+        -: 3145:				{
+        8: 3146:					liveNeigh = 0;
+        -: 3147:					//check 1
+        8: 3148:					if(field[a+1][b] == '+' || field[a+1][b] == 'm' || field[a+1][b] == '1' || field[a+1][b] == '2' || field[a+1][b] == '3' || field[a+1][b] == '4')
+        -: 3149:					{
+        1: 3150:						liveNeigh = liveNeigh + 1;
+        -: 3151:					}
+        -: 3152:					//check 2
+        8: 3153:					if(field[a+1][b+1] == '+' || field[a+1][b+1] == 'm' || field[a+1][b+1] == '1' || field[a+1][b+1] == '2' || field[a+1][b+1] == '3' || field[a+1][b+1] == '4')
+        -: 3154:					{
+        6: 3155:						liveNeigh = liveNeigh + 1;
+        -: 3156:					}
+        -: 3157:					//check 3
+        8: 3158:					if(field[a-1][b-1] == '+' || field[a-1][b-1] == 'm' || field[a-1][b-1] == '1' || field[a-1][b-1] == '2' || field[a-1][b-1] == '3' || field[a-1][b-1] == '4')
+        -: 3159:					{
+        5: 3160:						liveNeigh = liveNeigh + 1;
+        -: 3161:					}
+        -: 3162:					//check 4
+        8: 3163:					if(field[a][b+1] == '+' || field[a][b+1] == 'm' || field[a][b+1] == '1' || field[a][b+1] == '2' || field[a][b+1] == '3' || field[a][b+1] == '4')
+        -: 3164:					{
+        1: 3165:						liveNeigh = liveNeigh + 1;
+        -: 3166:					}
+        -: 3167:					//check 5
+        8: 3168:					if(field[a-1][b] == '+' || field[a-1][b] == 'm' || field[a-1][b] == '1' || field[a-1][b] == '2' || field[a-1][b] == '3' || field[a-1][b] == '4')
+        -: 3169:					{
+        1: 3170:						liveNeigh = liveNeigh + 1;
+        -: 3171:					}
+        -: 3172:					//check 6
+        8: 3173:					if(field[a][b-1] == '+' || field[a][b-1] == 'm' || field[a][b-1] == '1' || field[a][b-1] == '2' || field[a][b-1] == '3' || field[a][b-1] == '4')
+        -: 3174:					{
+        1: 3175:						liveNeigh = liveNeigh + 1;
+        -: 3176:					}
+        -: 3177:					//check 7
+        8: 3178:					if(field[a-1][b+1] == '+' || field[a-1][b+1] == 'm' || field[a-1][b+1] == '1' || field[a-1][b+1] == '2' || field[a-1][b+1] == '3' || field[a-1][b+1] == '4')
+        -: 3179:					{
+    #####: 3180:						liveNeigh = liveNeigh + 1;
+        -: 3181:					}
+        -: 3182:					//check 8
+        8: 3183:					if(field[a+1][b-1] == '+' || field[a+1][b-1] == 'm' || field[a+1][b-1] == '1' || field[a+1][b-1] == '2' || field[a+1][b-1] == '3' || field[a+1][b-1] == '4')
+        -: 3184:					{
+    #####: 3185:						liveNeigh = liveNeigh + 1;
+        -: 3186:					}
+        -: 3187:
+        8: 3188:					if(liveNeigh > 3 || liveNeigh <=1)
+        -: 3189:					{
+        -: 3190:
+        2: 3191:						field[a][b] = 'm';
+        -: 3192:
+        -: 3193:					}
+        8: 3194:					//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+        -: 3195:
+        -: 3196:
+        -: 3197:				}//end of first loop
+        -: 3198:
+        -: 3199:
+        -: 3200:			}
+        -: 3201:/*
+        -: 3202:			for(int x = 0; x < ySize; x++)
+        -: 3203:			{
+        -: 3204:				for(int y = 0; y < xSize; y++)
+        -: 3205:				{
+        -: 3206:					if(field[x][y] == 'p')
+        -: 3207:					{
+        -: 3208:						field[x][y] = '+';
+        -: 3209:					}
+        -: 3210:
+        -: 3211:					if(field[x][y] == 'm')
+        -: 3212:					{
+        -: 3213:						field[x][y] = '-';
+        -: 3214:					}
+        -: 3215:
+        -: 3216:				}
+        -: 3217:			}
+        -: 3218:
+        -: 3219:			*/
+        -: 3220:		}
+        -: 3221:
+        -: 3222:
+        -: 3223:
+        -: 3224:	}
+        -: 3225:
+        -: 3226://end super mega cut
+        -: 3227:
+        -: 3228:
+        -: 3229://need this
+       22: 3230:		for(int a = 0; a < ySize; a++)
+        -: 3231:		{
+        -: 3232:
+      220: 3233:			for(int b = 0; b < xSize; b++)
+        -: 3234:			{
+        -: 3235:
+        -: 3236:				
+      200: 3237:				if(field[a][b] == 'm')
+        -: 3238:				{
+        2: 3239:				field[a][b] = '-';
+        -: 3240:				}
+        -: 3241:
+      200: 3242:				if(field[a][b] == 'p')
+        -: 3243:				{
+        2: 3244:				field[a][b] = '+';
+        -: 3245:				}
+        -: 3246:				
+        -: 3247:
+        -: 3248:				//printf("|%c|",field[a][b]);
+        -: 3249:
+        -: 3250:			}
+        -: 3251:
+        -: 3252:		}
+        -: 3253://end need
+        -: 3254://end actual cut
+        -: 3255:
+        -: 3256:
+        -: 3257:
+        -: 3258://code to check for deaths
+        2: 3259:p1c = 0;
+        2: 3260:p2c = 0;
+        2: 3261:p3c = 0;
+       22: 3262:	for(int a = 0; a < ySize; a++){
+      220: 3263:		for(int b = 0; b < xSize; b++){
+        -: 3264:
+      200: 3265:			if(field[a][b] == '1')
+        -: 3266:			{
+        5: 3267:			p1c = p1c + 1;
+        -: 3268:			}
+        -: 3269:
+      200: 3270:			if(field[a][b] == '2')
+        -: 3271:			{
+        4: 3272:			p2c = p2c + 1;
+        -: 3273:			}
+        -: 3274:
+        -: 3275:
+      200: 3276:			if(field[a][b] == '3')
+        -: 3277:			{
+        4: 3278:			p3c = p3c + 1;
+        -: 3279:			}
+        -: 3280:			
+        -: 3281:			
+        -: 3282:		
+        -: 3283:		}
+        -: 3284:	}
+        -: 3285:
+        -: 3286://apply rules here
+        -: 3287:
+        -: 3288:
+        -: 3289:}
+        -: 3290://end 2p
+        -: 3291:
+        -: 3292:
+        1: 3293:if(p1c >= p2c && p1c >= p3c && p1c >= p4c)
+        -: 3294:{
+        1: 3295:printf("\nGame Over Player 1 Wins\n");
+        -: 3296:}
+        -: 3297:
+        1: 3298:if(p2c >= p1c && p2c >= p3c && p2c >= p4c)
+        -: 3299:{
+    #####: 3300:printf("\nGame Over Player 2 Wins\n");
+        -: 3301:}
+        -: 3302:
+        1: 3303:if(p3c >= p1c && p3c >= p2c && p3c >= p4c)
+        -: 3304:{
+    #####: 3305:printf("\nGame Over Player 3 Wins\n");
+        -: 3306:}
+        -: 3307:
+        1: 3308:if(p4c >= p1c && p4c >= p2c && p4c >= p3c)
+        -: 3309:{
+    #####: 3310:printf("\nGame Over Player 4 Wins\n");
+        -: 3311:}
+        -: 3312:
+        -: 3313:
+        -: 3314:
+        -: 3315:
+        1: 3316:}
+        -: 3317:
+        -: 3318:
+        -: 3319:
+        -: 3320:
+        3: 3321:void performCycle(int players)
+        -: 3322:{
+        -: 3323:
+        3: 3324:if(players == 1)
+        -: 3325:{
+        1: 3326:cycleWork();
+        -: 3327:}
+        -: 3328:
+        3: 3329:if(players == 2)
+        -: 3330:{
+        -: 3331:
+        1: 3332:twoPlayer();
+        -: 3333:
+        -: 3334:}
+        -: 3335:
+        3: 3336:if(players == 3)
+        -: 3337:{
+    #####: 3338:threePlayer();
+        -: 3339:}
+        -: 3340:
+        3: 3341:if(players == 4)
+        -: 3342:{
+        1: 3343:fourPlayer();
+        -: 3344:}
+        -: 3345:
+        -: 3346:
+        3: 3347:}
+        -: 3348:
+        -: 3349:
+        3: 3350:void save(){ 
+        -: 3351:       //work for save and load 11/6
+        -: 3352:        char* saveStr[100];
+        3: 3353:        printf("\n");
+        3: 3354:        printf("Would you like to save field? Type yes or no.");
+        3: 3355:	printf("\n");
+        3: 3356:	scanf("%s", saveStr);
+        3: 3357:	if(strcmp(saveStr, "no") == 0)
+        -: 3358:	{
+    #####: 3359:	  printf("Goodbye\n");
+        -: 3360:	}
+        3: 3361:	if(strcmp(saveStr, "yes") == 0)
+        -: 3362:	{
+        3: 3363:	  printf("Saved\n");
+        3: 3364:	  FILE *f = fopen("sample.data", "wb");
+        3: 3365:	  fprintf(f, "%d\n", xSize);
+        3: 3366:	  fprintf(f, "%d\n", ySize);
+        3: 3367:	  fwrite(field, sizeof(char), sizeof(field), f);
+        3: 3368:	  fclose(f);
+        -: 3369:	}
+        3: 3370:}
+        -: 3371:
+        3: 3372:void load(){
+        -: 3373:	char* loadStr[100];
+        3: 3374:	printf("\n");
+        3: 3375:        printf("Would you like to load a field? Type yes or no.");
+        3: 3376:	printf("\n");
+        3: 3377:	scanf("%s", loadStr);
+        3: 3378:	if(strcmp(loadStr, "no") == 0)
+        -: 3379:	{
+    #####: 3380:	  printf("Goodbye\n");
+        -: 3381:	}
+        3: 3382:	if(strcmp(loadStr, "yes") == 0)
+        -: 3383:	{
+        -: 3384:	  FILE *file;
+        3: 3385:	  file = fopen("sample.data", "r");
+        -: 3386:
+        3: 3387:	  if (file == NULL)
+        -: 3388:	    {
+    #####: 3389:	      printf("no such file\n");
+    #####: 3390:	      return 0;
+        -: 3391:	    }
+        -: 3392:	  
+        -: 3393:	  //read file into array
+        -: 3394:	  char* xSize[100];
+        -: 3395:	  char* ySize[100];
+        -: 3396:	  
+        3: 3397:	  fscanf(file, "%s", &xSize);
+        3: 3398:	  fscanf(file, "%s", &ySize);
+        -: 3399:
+        3: 3400:	  int x = atoi(xSize);
+        3: 3401:	  int y = atoi(ySize);
+        3: 3402:	  int size = x*y + 1;
+        -: 3403:	  //char buf[size];
+        -: 3404:	  char buf[10000];
+        -: 3405:
+        3: 3406:	  fscanf(file, "%s", &buf);
+        -: 3407:
+        -: 3408:	  int xDim;
+        -: 3409:	  int yDim;
+        -: 3410:
+        3: 3411:	  int counter = 0;
+        3: 3412:	  int rowCounter = 0;
+      303: 3413:	  for (yDim = 0; yDim < 100; yDim++)
+        -: 3414:	    {
+    30300: 3415:	      for (xDim = 0; xDim < 100; xDim++)
+        -: 3416:		{
+    30000: 3417:		  if ((buf[counter] == '+') || (buf[counter] == '-'))
+        -: 3418:		    {
+        -: 3419:		      //rowCounter++;
+      272: 3420:		      if (rowCounter == x)
+        -: 3421:			{
+       25: 3422:			putchar('\n');
+       25: 3423:			rowCounter = 0;
+        -: 3424:			}
+      272: 3425:		      printf("|");
+      272: 3426:		      printf("%c", buf[counter]);
+      272: 3427:		      printf("|");
+      272: 3428:		      rowCounter++;
+      272: 3429:		      counter++;
+        -: 3430:		    }
+    29728: 3431:		  else if (buf[counter] == 'm')
+        -: 3432:		    {
+        4: 3433:		      if (rowCounter == x)
+        -: 3434:			{
+    #####: 3435:			putchar('\n');
+    #####: 3436:			rowCounter = 0;
+        -: 3437:			}
+        4: 3438:		      printf("|");
+        4: 3439:		      printf("+");
+        4: 3440:		      printf("|");
+        4: 3441:		      rowCounter++;
+        4: 3442:		      counter++;
+        -: 3443:		    }
+    29724: 3444:		  else if (buf[counter] == 'p')
+        -: 3445:		    {
+        8: 3446:		      if (rowCounter == x)
+        -: 3447:			{
+        2: 3448:			putchar('\n');
+        2: 3449:			rowCounter = 0;
+        -: 3450:			}
+        8: 3451:		      printf("|");
+        8: 3452:		      printf("-");
+        8: 3453:		      printf("|");
+        8: 3454:		      rowCounter++;
+        8: 3455:		      counter++;
+        -: 3456:		    }
+        -: 3457:		  else 
+        -: 3458:		    {
+        -: 3459:		      //printf("|");
+        -: 3460:		      //printf("%c", buf[counter]);
+        -: 3461:		      // printf("|");
+    29716: 3462:		      counter++;
+        -: 3463:		    }
+        -: 3464:		}
+        -: 3465:	      //putchar('\n');
+        -: 3466:	    }
+        3: 3467:	  putchar('\n');
+        -: 3468:
+        -: 3469:
+        -: 3470:	}
+        -: 3471:
+        -: 3472:}
+        -: 3473:
+        -: 3474:
+        -: 3475:
+        1: 3476:int main(void){
+        -: 3477:
+        1: 3478:int looprun = 0;
+        1: 3479:int firstrun = 0;
+        -: 3480:char goagain[8];
+        5: 3481:while(looprun == 0)
+        -: 3482:{
+        -: 3483:
+        4: 3484:if(firstrun != 0)
+        -: 3485:{
+        3: 3486:printf("\nwould you like to run again? y for Yes n for No\n");
+        3: 3487:scanf("%s", goagain);
+        -: 3488:
+        3: 3489:if(goagain[0] == 'n')
+        -: 3490:{
+        1: 3491:break;
+        -: 3492:}
+        -: 3493:
+        -: 3494:}
+        -: 3495:
+        3: 3496:if(firstrun == 0)
+        -: 3497:{
+        1: 3498:firstrun = 1;
+        -: 3499:}
+        -: 3500:
+        3: 3501:getInput();
+        -: 3502:
+        3: 3503:performCycle(numPlayers);
+        -: 3504:
+        3: 3505: save();
+        3: 3506: load();
+        -: 3507://cycleWork();
+        -: 3508:}
+        -: 3509:
+        -: 3510:}

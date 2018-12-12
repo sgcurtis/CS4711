@@ -314,7 +314,7 @@ void getInput(){
 				}
 				
 
-				printf("|%c|",field[a][b]);
+				printf(" %c ",field[a][b]);
 				
 
 			}
@@ -767,7 +767,7 @@ void getInput(){
 					{
 						//did this for important reasons
 						field[a][b] = 'p';
-				printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+				//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
 
 					}
 
@@ -1174,7 +1174,7 @@ void getInput(){
 						field[a][b] = 'm';
 
 					}
-					printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+					//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
 
 
 				}//end of first loop
@@ -1321,7 +1321,7 @@ scanf("%s", xcoBuff);
 if((char)xcoBuff[0] != 'b')
 {
 xco = atoi(xcoBuff);
-printf("\n%d\n",xco);
+//printf("\n%d\n",xco);
 
 printf("\nEnter Y-coord of cell to kill or b to go back:");
 scanf("%s",ycoBuff);
@@ -1362,7 +1362,7 @@ scanf("%s", xcoBuff);
 if((char)xcoBuff[0] != 'b')
 {
 xco = atoi(xcoBuff);
-printf("\n%d\n",xco);
+//printf("\n%d\n",xco);
 
 printf("\nEnter Y-coord of cell to spawn or b to go back:");
 scanf("%s",ycoBuff);
@@ -1438,7 +1438,7 @@ scanf("%s", xcoBuff);
 if((char)xcoBuff[0] != 'b')
 {
 xco = atoi(xcoBuff);
-printf("\n%d\n",xco);
+//printf("\n%d\n",xco);
 
 printf("\nEnter Y-coord of cell to kill or b to go back:");
 scanf("%s",ycoBuff);
@@ -1479,7 +1479,7 @@ scanf("%s", xcoBuff);
 if((char)xcoBuff[0] != 'b')
 {
 xco = atoi(xcoBuff);
-printf("\n%d\n",xco);
+//printf("\n%d\n",xco);
 
 printf("\nEnter Y-coord of cell to spawn or b to go back:");
 scanf("%s",ycoBuff);
@@ -1579,7 +1579,7 @@ p2Turn = p2Turn - 1;
 					{
 						//did this for important reasons
 						field[a][b] = 'p';
-				printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+				//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
 
 					}
 
@@ -1648,7 +1648,7 @@ p2Turn = p2Turn - 1;
 						field[a][b] = 'm';
 
 					}
-					printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+					//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
 
 
 				}//end of first loop
@@ -1871,7 +1871,7 @@ pChoice = choice[0];
 //vcut
 if(pChoice == 'v')
 {
-printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+//printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
 
 for(int a = 0; a < ySize; a++)
 {
@@ -1899,7 +1899,7 @@ scanf("%s", xcoBuff);
 if((char)xcoBuff[0] != 'b')
 {
 xco = atoi(xcoBuff);
-printf("\n%d\n",xco);
+//printf("\n%d\n",xco);
 
 printf("\nEnter Y-coord of cell to kill or b to go back:");
 scanf("%s",ycoBuff);
@@ -1940,7 +1940,7 @@ scanf("%s", xcoBuff);
 if((char)xcoBuff[0] != 'b')
 {
 xco = atoi(xcoBuff);
-printf("\n%d\n",xco);
+//printf("\n%d\n",xco);
 
 printf("\nEnter Y-coord of cell to kill or b to go back:");
 scanf("%s",ycoBuff);
@@ -1988,7 +1988,7 @@ pChoice = choice[0];
 //vcut
 if(pChoice == 'v')
 {
-printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+//printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
 
 for(int a = 0; a < ySize; a++)
 {
@@ -2016,7 +2016,7 @@ scanf("%s", xcoBuff);
 if((char)xcoBuff[0] != 'b')
 {
 xco = atoi(xcoBuff);
-printf("\n%d\n",xco);
+//printf("\n%d\n",xco);
 
 printf("\nEnter Y-coord of cell to kill or b to go back:");
 scanf("%s",ycoBuff);
@@ -2057,7 +2057,7 @@ scanf("%s", xcoBuff);
 if((char)xcoBuff[0] != 'b')
 {
 xco = atoi(xcoBuff);
-printf("\n%d\n",xco);
+//printf("\n%d\n",xco);
 
 printf("\nEnter Y-coord of cell to kill or b to go back:");
 scanf("%s",ycoBuff);
@@ -2108,7 +2108,7 @@ pChoice = choice[0];
 //vcut
 if(pChoice == 'v')
 {
-printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+//printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
 
 for(int a = 0; a < ySize; a++)
 {
@@ -2136,7 +2136,7 @@ scanf("%s", xcoBuff);
 if((char)xcoBuff[0] != 'b')
 {
 xco = atoi(xcoBuff);
-printf("\n%d\n",xco);
+//printf("\n%d\n",xco);
 
 printf("\nEnter Y-coord of cell to kill or b to go back:");
 scanf("%s",ycoBuff);
@@ -2181,7 +2181,7 @@ scanf("%s", xcoBuff);
 if((char)xcoBuff[0] != 'b')
 {
 xco = atoi(xcoBuff);
-printf("\n%d\n",xco);
+//printf("\n%d\n",xco);
 
 printf("\nEnter Y-coord of cell to kill or b to go back:");
 scanf("%s",ycoBuff);
@@ -2277,7 +2277,7 @@ p3Turn = p3Turn - 1;
 					{
 						//did this for important reasons
 						field[a][b] = 'p';
-				printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+				//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
 
 					}
 
@@ -2346,7 +2346,7 @@ p3Turn = p3Turn - 1;
 						field[a][b] = 'm';
 
 					}
-					printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+					//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
 
 
 				}//end of first loop
@@ -2603,7 +2603,7 @@ pChoice = choice[0];
 //vcut
 if(pChoice == 'v')
 {
-printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+//printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
 
 for(int a = 0; a < ySize; a++)
 {
@@ -2631,7 +2631,7 @@ scanf("%s", xcoBuff);
 if((char)xcoBuff[0] != 'b')
 {
 xco = atoi(xcoBuff);
-printf("\n%d\n",xco);
+//printf("\n%d\n",xco);
 
 printf("\nEnter Y-coord of cell to kill or b to go back:");
 scanf("%s",ycoBuff);
@@ -2673,7 +2673,7 @@ scanf("%s", xcoBuff);
 if((char)xcoBuff[0] != 'b')
 {
 xco = atoi(xcoBuff);
-printf("\n%d\n",xco);
+//printf("\n%d\n",xco);
 
 printf("\nEnter Y-coord of cell to kill or b to go back:");
 scanf("%s",ycoBuff);
@@ -2722,7 +2722,7 @@ pChoice = choice[0];
 //vcut
 if(pChoice == 'v')
 {
-printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+//printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
 
 for(int a = 0; a < ySize; a++)
 {
@@ -2750,7 +2750,7 @@ scanf("%s", xcoBuff);
 if((char)xcoBuff[0] != 'b')
 {
 xco = atoi(xcoBuff);
-printf("\n%d\n",xco);
+//printf("\n%d\n",xco);
 
 printf("\nEnter Y-coord of cell to kill or b to go back:");
 scanf("%s",ycoBuff);
@@ -2791,7 +2791,7 @@ scanf("%s", xcoBuff);
 if((char)xcoBuff[0] != 'b')
 {
 xco = atoi(xcoBuff);
-printf("\n%d\n",xco);
+//printf("\n%d\n",xco);
 
 printf("\nEnter Y-coord of cell to kill or b to go back:");
 scanf("%s",ycoBuff);
@@ -2843,7 +2843,7 @@ pChoice = choice[0];
 //vcut
 if(pChoice == 'v')
 {
-printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+//printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
 
 for(int a = 0; a < ySize; a++)
 {
@@ -2871,7 +2871,7 @@ scanf("%s", xcoBuff);
 if((char)xcoBuff[0] != 'b')
 {
 xco = atoi(xcoBuff);
-printf("\n%d\n",xco);
+//printf("\n%d\n",xco);
 
 printf("\nEnter Y-coord of cell to kill or b to go back:");
 scanf("%s",ycoBuff);
@@ -2916,7 +2916,7 @@ scanf("%s", xcoBuff);
 if((char)xcoBuff[0] != 'b')
 {
 xco = atoi(xcoBuff);
-printf("\n%d\n",xco);
+//printf("\n%d\n",xco);
 
 printf("\nEnter Y-coord of cell to kill or b to go back:");
 scanf("%s",ycoBuff);
@@ -2953,7 +2953,7 @@ pChoice = choice[0];
 //vcut
 if(pChoice == 'v')
 {
-printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
+//printf("\nXSIZE: %d\n \nYSIZE: %d\n",xSize,ySize);
 
 for(int a = 0; a < ySize; a++)
 {
@@ -2981,7 +2981,7 @@ scanf("%s", xcoBuff);
 if((char)xcoBuff[0] != 'b')
 {
 xco = atoi(xcoBuff);
-printf("\n%d\n",xco);
+//printf("\n%d\n",xco);
 
 printf("\nEnter Y-coord of cell to kill or b to go back:");
 scanf("%s",ycoBuff);
@@ -3023,7 +3023,7 @@ scanf("%s", xcoBuff);
 if((char)xcoBuff[0] != 'b')
 {
 xco = atoi(xcoBuff);
-printf("\n%d\n",xco);
+//printf("\n%d\n",xco);
 
 printf("\nEnter Y-coord of cell to kill or b to go back:");
 scanf("%s",ycoBuff);
@@ -3122,7 +3122,7 @@ p4Turn = p4Turn - 1;
 					{
 						//did this for important reasons
 						field[a][b] = 'p';
-				printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+				//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
 
 					}
 
@@ -3191,7 +3191,7 @@ p4Turn = p4Turn - 1;
 						field[a][b] = 'm';
 
 					}
-					printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
+					//printf("\nNeighbors: %d  Coords:(%d,%d)\n",liveNeigh,b,a);
 
 
 				}//end of first loop
@@ -3474,6 +3474,30 @@ void load(){
 
 
 int main(void){
+
+int looprun = 0;
+int firstrun = 0;
+char goagain[8];
+while(looprun == 0)
+{
+
+if(firstrun != 0)
+{
+printf("\nwould you like to run again? y for Yes n for No\n");
+scanf("%s", goagain);
+
+if(goagain[0] == 'n')
+{
+break;
+}
+
+}
+
+if(firstrun == 0)
+{
+firstrun = 1;
+}
+
 getInput();
 
 performCycle(numPlayers);
@@ -3481,5 +3505,6 @@ performCycle(numPlayers);
  save();
  load();
 //cycleWork();
+}
 
 }
