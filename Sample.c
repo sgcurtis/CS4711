@@ -16,7 +16,7 @@ Description : Hello World in C, Ansi-style
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <CUnit/CUnit.h>
+//#include <CUnit/CUnit.h>
 
 //variables for recording user's input on size of field, cell placement, etc.
 //names should be self explanitonway's Game of Life\n\n");
@@ -252,7 +252,7 @@ void getInput(){
 	
 	//initField(xSize, ySize);
 
-	  if (loadSaved = 0)
+	  if (loadSaved == 0)
 	    {
 	for(int a = 0; a < ySize; a++){
 		for(int b = 0; b < xSize; b++){
