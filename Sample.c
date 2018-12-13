@@ -55,6 +55,7 @@ int stepping = 0;
 char* playerBuff[20];
 int numPlayers = 1;
 char field[100][100];
+int loadSaved = 0;
 
 //2d array for field use, starts at size of 2x2, changed later
 //char field[2][2];
@@ -251,12 +252,15 @@ void getInput(){
 	
 	//initField(xSize, ySize);
 
+	  if (loadSaved = 0)
+	    {
 	for(int a = 0; a < ySize; a++){
 		for(int b = 0; b < xSize; b++){
 
 			field[a][b] = '-';
 		}
 	}
+	    }
 	int exit = 0;
 
 	
@@ -1259,14 +1263,15 @@ int yco = 0;
 	//char field[xSize][ySize];
 	
 	//initField(xSize, ySize);
-
+ if (loadSaved == 0)
+   {
 	for(int a = 0; a < ySize; a++){
 		for(int b = 0; b < xSize; b++){
 
 			field[a][b] = '-';
 		}
 	}
-
+   }
 
 while(numCycles > 0)
 {
@@ -1813,14 +1818,15 @@ int yco = 0;
 	//char field[xSize][ySize];
 	
 	//initField(xSize, ySize);
-
+ if (loadSaved == 0)
+   {
 	for(int a = 0; a < ySize; a++){
 		for(int b = 0; b < xSize; b++){
 
 			field[a][b] = '-';
 		}
 	}
-
+   }
 
 while(numCycles > 0)
 {
@@ -2531,14 +2537,15 @@ int yco = 0;
 	//char field[xSize][ySize];
 	
 	//initField(xSize, ySize);
-
+ if (loadSaved == 0)
+   {
 	for(int a = 0; a < ySize; a++){
 		for(int b = 0; b < xSize; b++){
 
 			field[a][b] = '-';
 		}
 	}
-
+   }
 
 while(numCycles > 0)
 {
@@ -3390,7 +3397,8 @@ void load(){
 	scanf("%s", loadStr);
 	if(strcmp(loadStr, "no") == 0)
 	{
-	  printf("Goodbye\n");
+	  printf("You selected no\n");
+	  return 0;
 	}
 	if(strcmp(loadStr, "yes") == 0)
 	{
@@ -3399,21 +3407,33 @@ void load(){
 
 	  if (file == NULL)
 	    {
-	      printf("no such file\n");
+	      printf("Error: No saved field to load\n");
 	      return 0;
 	    }
 	  
-	  //read file into array
-	  char* xSize[100];
-	  char* ySize[100];
 	  
-	  fscanf(file, "%s", &xSize);
-	  fscanf(file, "%s", &ySize);
+	  //read file into array
+	  char* x_Size[100];
+	  char* y_Size[100];
+	  
+	  fscanf(file, "%s", &x_Size);
+	  fscanf(file, "%s", &y_Size);
 
-	  int x = atoi(xSize);
-	  int y = atoi(ySize);
+	  int x = atoi(x_Size);
+	  int y = atoi(y_Size);
 	  int size = x*y + 1;
 	  //char buf[size];
+	  
+	  if ((x != xSize) || (y != ySize))
+	    {
+	      printf("\nError: Unmatched board dimensions. Cannot load saved board\n\n\n\n");
+	      printf("Your dimensions: x: %d . y: %d .\n", xSize, ySize);
+	      printf("Saved dimensions: x: %d . y: %d .\n", x, y);
+	    return 0;
+	    }
+
+	  loadSaved = 1;
+	  
 	  char buf[10000];
 
 	  fscanf(file, "%s", &buf);
@@ -3423,6 +3443,8 @@ void load(){
 
 	  int counter = 0;
 	  int rowCounter = 0;
+	  int xCounter = 0;
+	  int yCounter = 0;
 	  for (yDim = 0; yDim < 100; yDim++)
 	    {
 	      for (xDim = 0; xDim < 100; xDim++)
@@ -3437,6 +3459,16 @@ void load(){
 			}
 		      printf("|");
 		      printf("%c", buf[counter]);
+		      field[yCounter][xCounter] = buf[counter];
+		      xCounter++;
+		      //printf(" %c  %d  %d\n", buf[counter], xCounter, yCounter);
+		      if (xCounter == x)
+			{
+			xCounter = 0;
+			yCounter++;
+			}
+		      //if (yCounter == yDim - 1)
+		      //yCounter = 0;
 		      printf("|");
 		      rowCounter++;
 		      counter++;
@@ -3450,6 +3482,14 @@ void load(){
 			}
 		      printf("|");
 		      printf("+");
+		      field[yCounter][xCounter] = '+';
+		      xCounter++;
+		      //printf(" %c  %d  %d\n", buf[counter], xCounter, yCounter);
+		      if (xCounter == x)
+			{
+			xCounter = 0;
+			yCounter++;
+			}
 		      printf("|");
 		      rowCounter++;
 		      counter++;
@@ -3463,6 +3503,95 @@ void load(){
 			}
 		      printf("|");
 		      printf("-");
+		      field[yCounter][xCounter] = '-';
+		      xCounter++;
+		      if (xCounter == x)
+			{
+			xCounter = 0;
+			yCounter++;
+			}
+		      printf("|");
+		      rowCounter++;
+		      counter++;
+		    }
+		  else if (buf[counter] == '1')
+		    {
+		      if (rowCounter == x)
+			{
+			putchar('\n');
+			rowCounter = 0;
+			}
+		      printf("|");
+		      printf("1");
+		      field[yCounter][xCounter] = '1';
+		      xCounter++;
+		      //printf(" .%c.  /%d/  -%d- %c\n", buf[counter], xCounter, yCounter, field[xCounter - 1][yCounter]);
+		      if (xCounter == x)
+			{
+			xCounter = 0;
+			yCounter++;
+			}
+		      printf("|");
+		      rowCounter++;
+		      counter++;
+		    }
+		  else if (buf[counter] == '2')
+		    {
+		      if (rowCounter == x)
+			{
+			putchar('\n');
+			rowCounter = 0;
+			}
+		      printf("|");
+		      printf("2");
+		      field[yCounter][xCounter] = '2';
+		      xCounter++;
+		      //printf(" .%c.  /%d/  -%d- %c\n", buf[counter], xCounter, yCounter, field[xCounter - 1][yCounter]);
+		      if (xCounter == x)
+			{
+			xCounter = 0;
+			yCounter++;
+			}
+		      printf("|");
+		      rowCounter++;
+		      counter++;
+		    }
+		  else if (buf[counter] == '3')
+		    {
+		      if (rowCounter == x)
+			{
+			putchar('\n');
+			rowCounter = 0;
+			}
+		      printf("|");
+		      printf("3");
+		      field[yCounter][xCounter] = '3';
+		      xCounter++;
+		      if (xCounter == x)
+			{
+			xCounter = 0;
+			yCounter++;
+			}
+		      printf("|");
+		      rowCounter++;
+		      counter++;
+		    }
+		  else if (buf[counter] == '4')
+		    {
+		      if (rowCounter == x)
+			{
+			putchar('\n');
+			rowCounter = 0;
+			}
+		      printf("|");
+		      printf("4");
+		      field[yCounter][xCounter] = '4';
+		      xCounter++;
+		      if (xCounter == x - 1)
+			{
+			xCounter = 0;
+			yCounter++;
+			}
 		      printf("|");
 		      rowCounter++;
 		      counter++;
@@ -3512,11 +3641,10 @@ firstrun = 1;
 }
 
 getInput();
-
+ load();
 performCycle(numPlayers);
 
  save();
- load();
 //cycleWork();
 }
 
